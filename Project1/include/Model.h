@@ -9,7 +9,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include "stb_image.h"
+#include "stbi/stb_image.h"
 
 #include <string>
 #include <vector>

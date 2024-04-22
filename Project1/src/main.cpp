@@ -29,8 +29,6 @@ bool firstMouse = true; // useful when the cursor first moves into the applicati
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-// create Game object
-Game game;
 
 int main()
 {
@@ -74,7 +72,6 @@ int main()
     glm::mat4 view = glm::mat4(1.0f);
     glm::mat4 projection = glm::mat4(1.0f);
 
-    game.generateMaze();
 
     // game loop
     while (!glfwWindowShouldClose(window)) 
@@ -91,13 +88,6 @@ int main()
         // clear the screen
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // update the view and projection matrices
-        view = game.camera.getViewMatrix();
-        projection = glm::perspective(game.camera.getFOV(), windowWidth / windowHeight, 0.1f, 100.0f);
-
-        // draw the game's objects
-        game.draw(view, projection);
 
         // check and call events, then swap the buffers
         glfwSwapBuffers(window);
@@ -128,12 +118,10 @@ void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos)
     float yOffset = lastY - yPos; // reversed, since the y axis on the window ranges from top to bottom
     lastX = xPos;
     lastY = yPos;
-    game.camera.cursorInput(window, xOffset, yOffset);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    game.camera.scrollInput(window, yoffset);
 }
 
 // function for checking keyboard inputs
@@ -143,5 +131,4 @@ void processInput(GLFWwindow* window)
         glfwSetWindowShouldClose(window, true);
     }
 
-    game.camera.keyInput(window, deltaTime);
 }
