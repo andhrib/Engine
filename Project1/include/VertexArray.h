@@ -11,8 +11,6 @@
 #include "ElementBuffer.h"
 #include "VertexBuffer.h"
 
-using std::vector;
-
 class VertexArray
 {
 private:
@@ -21,8 +19,8 @@ private:
 	VertexBuffer vb;
 
 public:
-	VertexArray(vector<float>& vbData, vector<unsigned int>& ebData);
-	VertexArray(vector<float>& vbData);
+	VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& ebData);
+	VertexArray(std::vector<float>& vbData);
 	VertexArray() {}
 	void bind();
 	void unBind();

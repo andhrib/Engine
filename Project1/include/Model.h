@@ -19,9 +19,6 @@
 #include <Shader.h>
 #include <Mesh.h>
 
-using std::vector;
-using std::string;
-
 class Model
 {
 public:
@@ -32,15 +29,15 @@ public:
     void Draw(Shader& shader);
 private:
     // model data
-    vector<Mesh> meshes;
-    std::map<string, Texture> textures_loaded;
-    string directory;
+    std::vector<Mesh> meshes;
+    std::map<std::string, Texture> textures_loaded;
+    std::string directory;
 
-    void loadModel(string path);
+    void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-    vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
-        string typeName);
-    unsigned int TextureFromFile(char const* file, string& directory);
+    std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
+        std::string typeName);
+    unsigned int TextureFromFile(char const* file, std::string& directory);
 };
 

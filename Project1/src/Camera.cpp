@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 // sets the default camera values
-Camera::Camera() : position(vec3(0.0f)), front(vec3(0.0f, 0.0f, -1.0f)), 
-up(vec3(0.0f, 1.0f, 0.0f)), right(vec3(1.0f, 0.0f, 0.0f)), worldUp(vec3(0.0f, 1.0f, 0.0f)), 
+Camera::Camera() : position(glm::vec3(0.0f)), front(glm::vec3(0.0f, 0.0f, -1.0f)), 
+up(glm::vec3(0.0f, 1.0f, 0.0f)), right(glm::vec3(1.0f, 0.0f, 0.0f)), worldUp(glm::vec3(0.0f, 1.0f, 0.0f)), 
 pitch(0.0f), yaw(270.0f), fov(45.0f), sensitivity(0.1f)
 {
 }

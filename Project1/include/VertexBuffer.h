@@ -4,16 +4,14 @@
 #include <GLFW/glfw3.h>
 #include <vector>
 
-using std::vector;
-
 class VertexBuffer
 {
 private:
 	unsigned int VBO;
-	vector<float> buffer;
+	std::vector<float> buffer;
 
 public:
-	VertexBuffer(vector<float>& b);
+	VertexBuffer(std::vector<float>& b);
 	VertexBuffer() {}
 	void bind();
 	unsigned int getVBO();

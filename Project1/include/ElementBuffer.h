@@ -5,16 +5,14 @@
 
 #include <vector>
 
-using std::vector;
-
 class ElementBuffer
 {
 private:
 	unsigned int EBO;
-	vector<unsigned int> buffer;
+	std::vector<unsigned int> buffer;
 
 public:
-	ElementBuffer(vector<unsigned int>& b);
+	ElementBuffer(std::vector<unsigned int>& b);
 	ElementBuffer() {}
 	void bind();
 	unsigned int getEBO();

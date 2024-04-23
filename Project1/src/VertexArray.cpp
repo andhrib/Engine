@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 
-VertexArray::VertexArray(vector<float>& vbData, vector<unsigned int>& ebData) : vb(vbData), eb(ebData)
+VertexArray::VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& ebData) : vb(vbData), eb(ebData)
 {
 	glGenVertexArrays(1, &VAO);
 	this->bind();
@@ -17,7 +17,7 @@ VertexArray::VertexArray(vector<float>& vbData, vector<unsigned int>& ebData) : 
 	this->unBind();
 }
 
-VertexArray::VertexArray(vector<float>& vbData)
+VertexArray::VertexArray(std::vector<float>& vbData)
 {
 	glGenVertexArrays(1, &VAO);
 	this->bind();

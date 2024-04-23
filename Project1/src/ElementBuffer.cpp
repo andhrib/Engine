@@ -1,6 +1,6 @@
 #include "ElementBuffer.h"
 
-ElementBuffer::ElementBuffer(vector<unsigned int>& b) : buffer(b)
+ElementBuffer::ElementBuffer(std::vector<unsigned int>& b) : buffer(b)
 {
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

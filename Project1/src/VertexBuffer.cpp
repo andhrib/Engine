@@ -1,6 +1,6 @@
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(vector<float>& b) : buffer(b)
+VertexBuffer::VertexBuffer(std::vector<float>& b) : buffer(b)
 {
 	glGenBuffers(1, &VBO);
 	this->bind();

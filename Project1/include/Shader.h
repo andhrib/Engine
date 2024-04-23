@@ -13,9 +13,6 @@
 #include <sstream>
 #include <vector>
 
-using std::string;
-using std::cout;
-
 class Shader
 {
 private:
@@ -25,15 +22,15 @@ private:
 	unsigned int loadTexture(char const* path);
 
 public:
-	Shader(const string& vertexPath, const string& fragmentPath, const string& texturePath);
+	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& texturePath);
 	Shader() {}
 	void use() const;
-	void addTexture(const string& path);
+	void addTexture(const std::string& path);
 
 	// uniform setting functions
-	void setMat4(const string& name, const glm::mat4& value) const;
-	void setVec3(const string& name, const glm::vec3& value) const;
-	void setInt(const string& name, int value) const;
-	void setFloat(const string& name, float value) const;
+	void setMat4(const std::string& name, const glm::mat4& value) const;
+	void setVec3(const std::string& name, const glm::vec3& value) const;
+	void setInt(const std::string& name, int value) const;
+	void setFloat(const std::string& name, float value) const;
 };
 

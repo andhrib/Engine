@@ -1,11 +1,11 @@
 #include "Shader.h"
 
-Shader::Shader(const string& vertexPath, const string& fragmentPath, const string& texturePath) : textures()
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& texturePath) : textures()
 {
 	unsigned int vertexShader, fragmentShader;
 
 	// retrieve the shader code from the shader files
-	string vertexCode, fragmentCode;
+	std::string vertexCode, fragmentCode;
 	std::ifstream vShaderFile, fShaderFile;
 
 	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
@@ -46,7 +46,7 @@ Shader::Shader(const string& vertexPath, const string& fragmentPath, const strin
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(vertexShader, sizeof(infoLog), NULL, infoLog);
-		cout << "ERROR_VERTEX_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << "ERROR_VERTEX_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	// fragment shader
@@ -59,7 +59,7 @@ Shader::Shader(const string& vertexPath, const string& fragmentPath, const strin
 	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
 	if (!success) {
 		glGetShaderInfoLog(fragmentShader, sizeof(infoLog), NULL, infoLog);
-		cout << "ERROR_FRAGMENT_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
+		std::cout << "ERROR_FRAGMENT_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 
 	// compile shader program
@@ -72,7 +72,7 @@ Shader::Shader(const string& vertexPath, const string& fragmentPath, const strin
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
 	if (!success) {
 		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-		cout << "ERROR_SHADER_PROGRAM_LINKING_FAILED\n" << infoLog << std::endl;
+		std::cout << "ERROR_SHADER_PROGRAM_LINKING_FAILED\n" << infoLog << std::endl;
 	}
 
 	// delete shaders
@@ -92,7 +92,7 @@ void Shader::use() const
 	}
 }
 
-void Shader::addTexture(const string& path)
+void Shader::addTexture(const std::string& path)
 {
 	unsigned int textureID = loadTexture(path.c_str());
 	textures.push_back(textureID);
@@ -135,39 +135,39 @@ unsigned int Shader::loadTexture(char const* path)
 	return textureID;
 }
 
-void Shader::setMat4(const string& name, const glm::mat4& value) const
+void Shader::setMat4(const std::string& name, const glm::mat4& value) const
 {
 	int uniformLocation = glGetUniformLocation(shaderProgram, name.c_str());
 	if (uniformLocation == -1) {
-		cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
+		std::cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
 	}
 	glUniformMatrix4fv(uniformLocation, 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void Shader::setVec3(const string& name, const glm::vec3& value) const
+void Shader::setVec3(const std::string& name, const glm::vec3& value) const
 {
 	int uniformLocation = glGetUniformLocation(shaderProgram, name.c_str());
 	if (uniformLocation == -1) {
-		cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
+		std::cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
 	}
 	glUniform3f(uniformLocation, value.x, value.y, value.z);
 }
 
-void Shader::setInt(const string& name, int value) const
+void Shader::setInt(const std::string& name, int value) const
 {
 	int uniformLocation = glGetUniformLocation(shaderProgram, name.c_str());
 	if (uniformLocation == -1) {
-		cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
+		std::cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
 	}
 
 	glUniform1i(uniformLocation, value);
 }
 
-void Shader::setFloat(const string& name, float value) const
+void Shader::setFloat(const std::string& name, float value) const
 {
 	int uniformLocation = glGetUniformLocation(shaderProgram, name.c_str());
 	if (uniformLocation == -1) {
-		cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
+		std::cout << "FAILED_TO_GET_LOCATION_OF_UNIFORM: " << name << std::endl;
 	}
 
 	glUniform1f(uniformLocation, value);
