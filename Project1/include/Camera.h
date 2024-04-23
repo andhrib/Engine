@@ -8,6 +8,17 @@
 
 #include <vector>
 
+// default values
+const glm::vec3 POSITION = glm::vec3(0.0f);
+const glm::vec3 FRONT = glm::vec3(0.0f, 0.0f, -1.0f);
+const glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f);
+const glm::vec3 RIGHT = glm::vec3(1.0f, 0.0f, 0.0f);
+const glm::vec3 WORLDUP = glm::vec3(0.0f, 1.0f, 0.0f);
+const float PITCH = 0.0f;
+const float YAW = 270.0f;
+const float FOV = 45.0f;
+const float SENSITIVITY = 0.1f;
+
 class Camera
 {
 protected: 
@@ -26,9 +37,9 @@ protected:
 
 public:
 	Camera();
+	Camera(glm::vec3 position);
 	void cursorInput(GLFWwindow* window, float xOffset, float yOffset); // process the input from moving the cursor
 	void scrollInput(GLFWwindow* window, float value); // process the input from using the scroll wheel
-	virtual void keyInput(GLFWwindow* window, float deltaTime) = 0; // process the input from pressing keys
 	glm::mat4 getViewMatrix() const; // generate and return the corresponding view matrix
 	glm::vec3 getPosition() const; // return the position vector
 	glm::vec3 getFront() const; // return the front vector
