@@ -23,6 +23,7 @@ private:
 
 public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& texturePath);
+	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader() {}
 	void use() const;
 	void addTexture(const std::string& path);

@@ -72,4 +72,26 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\vertex\basic.vert" />
+    <None Include="shaders\fragment\basic.frag" />
+    <None Include="res\models\wooden_table\Wooden Table.dae" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\models\wooden_table\Albedo.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\wooden_table\AO.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\wooden_table\Metallic.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\wooden_table\Normal.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\models\wooden_table\Roughness.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

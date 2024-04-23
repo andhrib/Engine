@@ -37,7 +37,7 @@ protected:
 
 public:
 	Camera();
-	Camera(glm::vec3 position);
+	Camera(const glm::vec3& position);
 	void cursorInput(GLFWwindow* window, float xOffset, float yOffset); // process the input from moving the cursor
 	void scrollInput(GLFWwindow* window, float value); // process the input from using the scroll wheel
 	glm::mat4 getViewMatrix() const; // generate and return the corresponding view matrix

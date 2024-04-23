@@ -159,6 +159,18 @@
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="res\models\wooden_table\Wooden Table.dae" />
+    <None Include="shaders\fragment\basic.frag" />
+    <None Include="shaders\vertex\basic.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\models\wooden_table\Albedo.jpg" />
+    <Image Include="res\models\wooden_table\AO.jpg" />
+    <Image Include="res\models\wooden_table\Metallic.jpg" />
+    <Image Include="res\models\wooden_table\Normal.png" />
+    <Image Include="res\models\wooden_table\Roughness.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

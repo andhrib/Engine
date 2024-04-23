@@ -83,6 +83,86 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, c
 	addTexture(texturePath);
 }
 
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
+{
+	unsigned int vertexShader, fragmentShader;
+
+	// retrieve the shader code from the shader files
+	std::string vertexCode, fragmentCode;
+	std::ifstream vShaderFile, fShaderFile;
+
+	vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+	try
+	{
+		// open files
+		vShaderFile.open(vertexPath);
+		fShaderFile.open(fragmentPath);
+		std::stringstream vShaderStream, fShaderStream;
+		// read file's buffer contents into streams
+		vShaderStream << vShaderFile.rdbuf();
+		fShaderStream << fShaderFile.rdbuf();
+		// close file handlers
+		vShaderFile.close();
+		fShaderFile.close();
+		// convert stream into string
+		vertexCode = vShaderStream.str();
+		fragmentCode = fShaderStream.str();
+	}
+	catch (std::ifstream::failure e)
+	{
+		std::cout << "ERROR::SHADER::FILE_NOT_SUCCESFULLY_READ" << std::endl;
+	}
+
+	const char* vertexShaderSource = vertexCode.c_str();
+	const char* fragmentShaderSource = fragmentCode.c_str();
+
+	// vertex shader
+	// link the shader file with the program and compile	
+	vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	// error checking
+	int success;
+	char infoLog[512];
+	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, sizeof(infoLog), NULL, infoLog);
+		std::cout << "ERROR_VERTEX_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+	// fragment shader
+	// link the shader file with the program and compile	
+	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// error checking
+	glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(fragmentShader, sizeof(infoLog), NULL, infoLog);
+		std::cout << "ERROR_FRAGMENT_SHADER_COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
+
+	// compile shader program
+	shaderProgram = glCreateProgram();
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	// error checking
+	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+		std::cout << "ERROR_SHADER_PROGRAM_LINKING_FAILED\n" << infoLog << std::endl;
+	}
+
+	// delete shaders
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
+}
+
 void Shader::use() const
 {
 	glUseProgram(shaderProgram);

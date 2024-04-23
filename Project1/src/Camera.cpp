@@ -5,7 +5,7 @@ Camera::Camera() : Camera(POSITION)
 {
 }
 
-Camera::Camera(glm::vec3 position) : position(position), front(FRONT), up(UP), right(RIGHT), 
+Camera::Camera(const glm::vec3& position) : position(position), front(FRONT), up(UP), right(RIGHT), 
 worldUp(WORLDUP), pitch(PITCH), yaw(YAW), fov(FOV), sensitivity(SENSITIVITY) 
 {
 }
