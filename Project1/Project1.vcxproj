@@ -141,6 +141,16 @@
     <ClInclude Include="..\..\OpenGLTutorial1\OpenGLTutorial1\stb_image.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\ElementBuffer.h" />
+    <ClInclude Include="include\external\glad\glad.h" />
+    <ClInclude Include="include\external\imgui\imconfig.h" />
+    <ClInclude Include="include\external\imgui\imgui.h" />
+    <ClInclude Include="include\external\imgui\imgui_impl_glfw.h" />
+    <ClInclude Include="include\external\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="include\external\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="include\external\imgui\imgui_internal.h" />
+    <ClInclude Include="include\external\imgui\imstb_rectpack.h" />
+    <ClInclude Include="include\external\imgui\imstb_textedit.h" />
+    <ClInclude Include="include\external\imgui\imstb_truetype.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Model.h" />
     <ClInclude Include="include\Shader.h" />
@@ -149,9 +159,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\OpenGLTutorial1\OpenGLTutorial1\stb_image.cpp" />
+    <ClCompile Include="include\external\glad\glad.c" />
+    <ClCompile Include="include\external\imgui\imgui.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_demo.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_draw.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_tables.cpp" />
+    <ClCompile Include="include\external\imgui\imgui_widgets.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ElementBuffer.cpp" />
-    <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Mesh.cpp" />
     <ClCompile Include="src\Model.cpp" />
@@ -161,8 +178,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\models\wooden_table\Wooden Table.dae" />
-    <None Include="shaders\fragment\basic.frag" />
-    <None Include="shaders\vertex\basic.vert" />
+    <None Include="res\shaders\fragment\basic.frag" />
+    <None Include="res\shaders\vertex\basic.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\wooden_table\Albedo.jpg" />

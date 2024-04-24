@@ -1,5 +1,8 @@
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include <glfw/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -12,7 +15,7 @@
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos);
+//void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 // other function prototypes
@@ -27,17 +30,17 @@ const float fov = 45.0f;
 const float near = 0.1f;
 const float far = 100.0f;
 
-// the (x, y) position of the cursor on the last frame
-float lastX = windowWidth / 2;
-float lastY = windowHeight / 2;
-bool firstMouse = true; // useful when the cursor first moves into the application window
+//// the (x, y) position of the cursor on the last frame
+//float lastX = windowWidth / 2;
+//float lastY = windowHeight / 2;
+//bool firstMouse = true; // useful when the cursor first moves into the application window
 
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // create the camera object
-const glm::vec3 cameraPos = glm::vec3(0.0f, 1.5f, 7.0f);
+const glm::vec3 cameraPos = glm::vec3(0.0f, 2.5f, 7.0f);
 Camera camera(cameraPos);
 
 
@@ -66,16 +69,24 @@ int main()
         return -1;
     }
 
+    // initialize ImGui
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
+    ImGui::StyleColorsDark();
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init("#version 460");
+
     // set the viewport
     glViewport(0, 0, windowWidth, windowHeight);
 
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, cursor_pos_callback);
+    //glfwSetCursorPosCallback(window, cursor_pos_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // flags
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -90,7 +101,7 @@ int main()
     glm::mat4 projection = glm::perspective(fov, windowWidth / windowHeight, near, far);
 
     // shaders
-    Shader basicShader = Shader("shaders/vertex/basic.vert", "shaders/fragment/basic.frag");
+    Shader basicShader = Shader("res/shaders/vertex/basic.vert", "res/shaders/fragment/basic.frag");
     basicShader.use();
     basicShader.setMat4("u_model", model);
     basicShader.setMat4("u_projection", projection);
@@ -118,13 +129,32 @@ int main()
         glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // start new frame in ImGui
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         // draw the model
         woodenTable.Draw(basicShader);
+
+        // configure the Imgui window
+        ImGui::Begin("Window");
+        ImGui::Text("Hello there, adventurer!");
+        ImGui::End();
+
+        // render Imgui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // check and call events, then swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
+
+    // terminate ImGui
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     // terminate GLFW
     glfwTerminate();
@@ -137,21 +167,21 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos)
-{
-    if (firstMouse) // initially set to true, this statements prevents the view from suddenly jumping when the cursor first moves into the window
-    {
-        lastX = xPos;
-        lastY = yPos;
-        firstMouse = false;
-    }
-
-    float xOffset = xPos - lastX;
-    float yOffset = lastY - yPos; // reversed, since the y axis on the window ranges from top to bottom
-    lastX = xPos;
-    lastY = yPos;
-    camera.cursorInput(window, xOffset, yOffset);
-}
+//void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos)
+//{
+//    if (firstMouse) // initially set to true, this statements prevents the view from suddenly jumping when the cursor first moves into the window
+//    {
+//        lastX = xPos;
+//        lastY = yPos;
+//        firstMouse = false;
+//    }
+//
+//    float xOffset = xPos - lastX;
+//    float yOffset = lastY - yPos; // reversed, since the y axis on the window ranges from top to bottom
+//    lastX = xPos;
+//    lastY = yPos;
+//    //camera.cursorInput(window, xOffset, yOffset);
+//}
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
