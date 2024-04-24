@@ -77,6 +77,8 @@ int main()
     // flags
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     // model
     Model woodenTable = Model("res/models/wooden_table/Wooden Table.dae");
