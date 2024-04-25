@@ -10,32 +10,6 @@ worldUp(WORLDUP), pitch(PITCH), yaw(YAW), fov(FOV), sensitivity(SENSITIVITY)
 {
 }
 
-void Camera::cursorInput(GLFWwindow* window, float xOffset, float yOffset)
-{
-	// update the angle values
-	yaw += xOffset * sensitivity;
-	pitch += yOffset * sensitivity;
-
-	// keep the pitch in the range (-90°, 90°)
-	if (pitch > 89.0f) {
-		pitch = 89.0f;
-	}
-	else if (pitch < -89.0f) {
-		pitch = -89.0f;
-	}
-
-	// update the front vector
-	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front.y = sin(glm::radians(pitch));
-	front.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
-	front = normalize(front);
-
-	// update the right vector
-	right = normalize(glm::cross(front, worldUp));
-
-	// update the up vector
-	up = normalize(glm::cross(right, front));
-}
 
 void Camera::scrollInput(GLFWwindow* window, float value)
 {

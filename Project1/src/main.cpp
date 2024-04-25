@@ -15,7 +15,6 @@
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-//void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
 // other function prototypes
@@ -30,17 +29,16 @@ const float fov = 45.0f;
 const float near = 0.1f;
 const float far = 100.0f;
 
-//// the (x, y) position of the cursor on the last frame
-//float lastX = windowWidth / 2;
-//float lastY = windowHeight / 2;
-//bool firstMouse = true; // useful when the cursor first moves into the application window
+// rotation parameters
+glm::vec3 axis = glm::vec3(0.0f, 1.0f, 0.0f);
+float rotSpeed = 15.0f;
 
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 // create the camera object
-const glm::vec3 cameraPos = glm::vec3(0.0f, 2.5f, 7.0f);
+const glm::vec3 cameraPos = glm::vec3(-1.0f, 2.0f, 10.0f);
 Camera camera(cameraPos);
 
 
@@ -82,11 +80,9 @@ int main()
 
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    //glfwSetCursorPosCallback(window, cursor_pos_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // flags
-    //glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
@@ -123,10 +119,15 @@ int main()
         basicShader.use();
         view = camera.getViewMatrix();
         basicShader.setMat4("u_view", view);
+        // model rotation
+        if (glm::length(axis) != 0) { // if axis == (0, 0, 0), remain still
+            model = glm::rotate(model, glm::radians(deltaTime) * rotSpeed, axis);
+            basicShader.setMat4("u_model", model);
+        }
 
         // rendering commands
         // clear the screen
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // start new frame in ImGui
@@ -140,6 +141,10 @@ int main()
         // configure the Imgui window
         ImGui::Begin("Window");
         ImGui::Text("Hello there, adventurer!");
+        ImGui::SliderFloat("Rotation speed", &rotSpeed, 0.0f, 60.0f);
+        ImGui::SliderFloat("X axis", &axis.x, 0.0f, 1.0f);
+        ImGui::SliderFloat("Y axis", &axis.y, 0.0f, 1.0f);
+        ImGui::SliderFloat("Z axis", &axis.z, 0.0f, 1.0f);
         ImGui::End();
 
         // render Imgui
@@ -167,21 +172,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-//void cursor_pos_callback(GLFWwindow* window, double xPos, double yPos)
-//{
-//    if (firstMouse) // initially set to true, this statements prevents the view from suddenly jumping when the cursor first moves into the window
-//    {
-//        lastX = xPos;
-//        lastY = yPos;
-//        firstMouse = false;
-//    }
-//
-//    float xOffset = xPos - lastX;
-//    float yOffset = lastY - yPos; // reversed, since the y axis on the window ranges from top to bottom
-//    lastX = xPos;
-//    lastY = yPos;
-//    //camera.cursorInput(window, xOffset, yOffset);
-//}
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
