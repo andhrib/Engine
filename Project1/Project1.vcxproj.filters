@@ -36,9 +36,6 @@
     <ClInclude Include="include\VertexBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\OpenGLTutorial1\OpenGLTutorial1\stb_image.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="include\external\glad\glad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,6 +69,12 @@
     <ClInclude Include="include\LightCube.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\external\stbi\stb_image.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\WoodenTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp">
@@ -96,9 +99,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\VertexBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\OpenGLTutorial1\OpenGLTutorial1\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\external\glad\glad.c">
@@ -128,11 +128,19 @@
     <ClCompile Include="src\LightCube.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\external\stbi\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WoodenTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\vertex\basic.vert" />
     <None Include="res\shaders\fragment\basic.frag" />
     <None Include="res\models\wooden_table\Wooden Table.dae" />
+    <None Include="res\shaders\fragment\lightCube.frag" />
+    <None Include="res\shaders\vertex\lightCube.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\wooden_table\Albedo.jpg">

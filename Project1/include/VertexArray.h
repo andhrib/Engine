@@ -20,8 +20,10 @@ private:
 
 public:
 	VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& ebData);
-	VertexArray(std::vector<float>& vbData);
 	VertexArray() {}
+	~VertexArray();
+	// set the format of the attributes in the vertex array
+	void setFormat(std::vector<unsigned int>& attributeLengths, unsigned int stride);
 	void bind();
 	void unBind();
 	void instancingMat4(const std::vector<glm::mat4>& data);

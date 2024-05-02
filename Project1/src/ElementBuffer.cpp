@@ -7,6 +7,11 @@ ElementBuffer::ElementBuffer(std::vector<unsigned int>& b) : buffer(b)
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer.size() * sizeof(int), buffer.data(), GL_STATIC_DRAW);
 }
 
+ElementBuffer::~ElementBuffer()
+{
+	//glDeleteBuffers(1, &EBO);
+}
+
 void ElementBuffer::bind()
 {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);

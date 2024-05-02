@@ -7,6 +7,11 @@ VertexBuffer::VertexBuffer(std::vector<float>& b) : buffer(b)
 	glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(float), buffer.data(), GL_STATIC_DRAW);
 }
 
+VertexBuffer::~VertexBuffer()
+{
+	//glDeleteBuffers(1, &VBO);
+}
+
 void VertexBuffer::bind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);

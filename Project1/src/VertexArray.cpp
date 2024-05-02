@@ -7,26 +7,28 @@ VertexArray::VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& 
 	vb.bind();
 	eb.bind();
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-
 	this->unBind();
 }
 
-VertexArray::VertexArray(std::vector<float>& vbData)
+
+
+VertexArray::~VertexArray()
 {
-	glGenVertexArrays(1, &VAO);
+	//glDeleteVertexArrays(1, &VAO);
+}
+
+void VertexArray::setFormat(std::vector<unsigned int>& attributeLengths, unsigned int stride)
+{
 	this->bind();
 	vb.bind();
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	unsigned int offset = 0;
+
+	for (unsigned int idx = 0; idx < attributeLengths.size(); idx++) {
+		glVertexAttribPointer(idx, attributeLengths[idx], GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)(offset * sizeof(float)));
+		glEnableVertexAttribArray(idx);
+		offset += attributeLengths[idx];
+	}
 
 	this->unBind();
 }

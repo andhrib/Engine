@@ -8,10 +8,13 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include <iostream>
+#include <vector>
 
 #include "Camera.h"
 #include "Model.h"
 #include "Shader.h"
+#include "LightCube.h"
+#include "WoodenTable.h"
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -24,18 +27,19 @@ void processInput(GLFWwindow* window);
 const float windowWidth = 1080.0f;
 const float windowHeight = 720.0f;
 
-// view parameters
-const float fov = 45.0f;
-const float near = 0.1f;
-const float far = 100.0f;
-
-// rotation parameters
-glm::vec3 axis = glm::vec3(0.0f, 1.0f, 0.0f);
-float rotSpeed = 15.0f;
-
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// view parameters
+const float near = 0.1f;
+const float far = 100.0f;
+
+// lighting parameters
+std::vector<glm::vec3> lightCubePositions = {
+    glm::vec3(3.0f, 4.0f, -7.0f),
+    glm::vec3(-10.0f, -2.0f, -3.0f)
+};
 
 // create the camera object
 const glm::vec3 cameraPos = glm::vec3(-1.0f, 2.0f, 10.0f);
@@ -51,7 +55,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create window
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Maze", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Engine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -84,25 +88,16 @@ int main()
 
     // flags
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_BACK);
 
-    // model
-    Model woodenTable = Model("res/models/wooden_table/Wooden Table.dae");
+    // the objects to be drawn into the scene
+    WoodenTable woodenTable;
+    LightCube lightCube(lightCubePositions);
 
     // initialize the view and projection matrices
-    glm::mat4 model = glm::mat4(1.0f);
-    model = glm::scale(model, glm::vec3(0.1f)); // shrink down the table 10x
-    glm::mat4 view = glm::mat4(1.0f);
-    glm::mat4 projection = glm::perspective(fov, windowWidth / windowHeight, near, far);
-
-    // shaders
-    Shader basicShader = Shader("res/shaders/vertex/basic.vert", "res/shaders/fragment/basic.frag");
-    basicShader.use();
-    basicShader.setMat4("u_model", model);
-    basicShader.setMat4("u_projection", projection);
-    basicShader.setInt("u_material.texture_albedo", 0);
-    basicShader.addTexture("res/models/wooden_table/Albedo.jpg");
+    glm::mat4 view(1.0f);
+    glm::mat4 projection(1.0f);
 
     // main loop
     while (!glfwWindowShouldClose(window)) 
@@ -115,15 +110,9 @@ int main()
         // check keyboard input
         processInput(window);
 
-        // set the uniforms
-        basicShader.use();
+        // update the view and projection matrices
         view = camera.getViewMatrix();
-        basicShader.setMat4("u_view", view);
-        // model rotation
-        if (glm::length(axis) != 0) { // if axis == (0, 0, 0), remain still
-            model = glm::rotate(model, glm::radians(deltaTime) * rotSpeed, axis);
-            basicShader.setMat4("u_model", model);
-        }
+        projection = glm::perspective(camera.getFOV(), windowWidth / windowHeight, near, far);
 
         // rendering commands
         // clear the screen
@@ -135,16 +124,16 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // draw the model
-        woodenTable.Draw(basicShader);
+        // draw the objects
+        woodenTable.draw(view, projection, deltaTime);
+        lightCube.draw(view, projection);
 
         // configure the Imgui window
         ImGui::Begin("Window");
-        ImGui::Text("Hello there, adventurer!");
-        ImGui::SliderFloat("Rotation speed", &rotSpeed, 0.0f, 60.0f);
-        ImGui::SliderFloat("X axis", &axis.x, 0.0f, 1.0f);
-        ImGui::SliderFloat("Y axis", &axis.y, 0.0f, 1.0f);
-        ImGui::SliderFloat("Z axis", &axis.z, 0.0f, 1.0f);
+        ImGui::SliderFloat("Rotation speed", &(woodenTable.rotSpeed), 0.0f, 60.0f);
+        ImGui::SliderFloat("X axis", &(woodenTable.axis.x), 0.0f, 1.0f);
+        ImGui::SliderFloat("Y axis", &(woodenTable.axis.y), 0.0f, 1.0f);
+        ImGui::SliderFloat("Z axis", &(woodenTable.axis.z), 0.0f, 1.0f);
         ImGui::End();
 
         // render Imgui
@@ -154,8 +143,8 @@ int main()
         // check and call events, then swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
-    }
 
+    }
     // terminate ImGui
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -175,7 +164,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.scrollInput(window, xoffset);
+    camera.scrollInput(window, yoffset);
 }
 
 // function for checking keyboard inputs

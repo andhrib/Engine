@@ -22,9 +22,9 @@ private:
 	unsigned int loadTexture(char const* path);
 
 public:
-	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& texturePath);
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader() {}
+	~Shader();
 	void use() const;
 	void addTexture(const std::string& path);
 
