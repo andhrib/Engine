@@ -1,7 +1,7 @@
 #include "WoodenTable.h"
 
 WoodenTable::WoodenTable() : model("res/models/wooden_table/Wooden Table.dae"),
-shader("res/shaders/vertex/basic.vert", "res/shaders/fragment/basic.frag"),
+shader("res/shaders/vertex/woodenTable.vert", "res/shaders/fragment/woodenTable.frag"),
 modelMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f)
 {
     shader.use();
