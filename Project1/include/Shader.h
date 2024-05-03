@@ -26,7 +26,7 @@ public:
 	Shader() {}
 	~Shader();
 	void use() const;
-	void addTexture(const std::string& path);
+	void addTexture(const std::string& path, const std::string& uniform_name);
 
 	// uniform setting functions
 	void setMat4(const std::string& name, const glm::mat4& value) const;

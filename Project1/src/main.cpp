@@ -15,6 +15,7 @@
 #include "Shader.h"
 #include "LightCube.h"
 #include "WoodenTable.h"
+#include "Skybox.h"
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -91,6 +92,9 @@ int main()
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
 
+	// the skybox object
+    Skybox skybox;
+
     // the objects to be drawn into the scene
     WoodenTable woodenTable(lightCubePositions, cameraPos);
     LightCube lightCube(lightCubePositions);
@@ -127,6 +131,17 @@ int main()
         // draw the objects
         woodenTable.draw(view, projection, deltaTime);
         lightCube.draw(view, projection);
+
+		// draw the skybox last, when the depth buffer is full
+        // disable face culling for the skybox
+		glDisable(GL_CULL_FACE);
+		// modify the depth function to draw the skybox
+        glDepthFunc(GL_LEQUAL);
+		skybox.draw(view, projection);
+		// re-enable face culling
+        glEnable(GL_CULL_FACE);
+		// reset the depth function to default
+        glDepthFunc(GL_LESS);
 
         // configure the Imgui window
         ImGui::Begin("Window");

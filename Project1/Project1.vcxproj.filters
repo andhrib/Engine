@@ -75,6 +75,9 @@
     <ClInclude Include="include\WoodenTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\Skybox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Camera.cpp">
@@ -134,6 +137,9 @@
     <ClCompile Include="src\WoodenTable.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Skybox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\vertex\woodenTable.vert" />
@@ -141,6 +147,9 @@
     <None Include="res\models\wooden_table\Wooden Table.dae" />
     <None Include="res\shaders\fragment\lightCube.frag" />
     <None Include="res\shaders\vertex\lightCube.vert" />
+    <None Include="res\shaders\fragment\skybox.frag" />
+    <None Include="res\shaders\vertex\skybox.vert" />
+    <None Include="res\skybox_cubemaps\photo_studio.hdr" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\models\wooden_table\Albedo.jpg">

@@ -27,6 +27,7 @@ shader("res/shaders/vertex/lightCube.vert", "res/shaders/fragment/lightCube.frag
 		7, 6, 5, 5, 4, 7  // back
 	};
 
+	// create and set up the vertex array
 	va = VertexArray(vbData, ebData);
 	std::vector<unsigned int> attributeLengths = {3}; // one attribute (position) with three coordinates
 	va.setFormat(attributeLengths, 3);

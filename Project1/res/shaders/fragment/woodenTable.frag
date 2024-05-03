@@ -23,7 +23,7 @@ void main()
 {
 	vec3 albedoColor = vec3(texture(u_material.texture_albedo, texCoords));
 	vec4 specularTexture = texture(u_material.texture_specular, texCoords);
-	vec3 specularColor = vec3(specularTexture);
+	vec3 specularColor = vec3(specularTexture.r);
 	// unit vector that points from the fragment to the camera
 	vec3 viewDir = normalize(u_cameraPos - fragPos);
 	// normals are not necessarily normalised
@@ -36,7 +36,7 @@ void main()
 
 vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir) 
 {
-	float ambientStrength = 0.05;
+	float ambientStrength = 0.005;
 	float specularStrength = 0.3;
 	float pointLightStrength = 10.0;
 	vec3 pointLight = ambientStrength * albedoColor;

@@ -6,10 +6,8 @@ modelMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f)
 {
 	// set the textures
     shader.use();
-	shader.addTexture("res/models/wooden_table/Albedo.jpg");
-    shader.setInt("u_material.texture_albedo", 0);
-	shader.addTexture("res/models/wooden_table/Metallic.jpg");
-    shader.setInt("u_material.texture_specular", 1);
+	shader.addTexture("res/models/wooden_table/Albedo.jpg", "u_material.texture_albedo");
+	shader.addTexture("res/models/wooden_table/Metallic.jpg", "u_material.texture_specular");
 
 	// set the camera position
 	shader.setVec3("u_cameraPos", cameraPos);

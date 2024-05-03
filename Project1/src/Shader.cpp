@@ -94,9 +94,11 @@ void Shader::use() const
 	}
 }
 
-void Shader::addTexture(const std::string& path)
+void Shader::addTexture(const std::string& path, const std::string& uniform_name)
 {
+	glUseProgram(shaderProgram);
 	unsigned int textureID = loadTexture(path.c_str());
+	setInt(uniform_name, (int)textures.size());
 	textures.push_back(textureID);
 }
 
