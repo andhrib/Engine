@@ -20,9 +20,10 @@
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // other function prototypes
-void processInput(GLFWwindow* window);
+void processInput(GLFWwindow* window, ImGuiIO& io);
 
 // window size parameters
 const float windowWidth = 1080.0f;
@@ -31,6 +32,10 @@ const float windowHeight = 720.0f;
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
+
+// variables for mouse input
+double lastX, lastY;
+bool firstMouse = true;
 
 // view parameters
 const float near = 0.1f;
@@ -43,7 +48,7 @@ std::vector<glm::vec3> lightCubePositions = {
 };
 
 // create the camera object
-const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 14.0f);
+const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 10.0f);
 Camera camera(cameraPos);
 
 
@@ -86,6 +91,7 @@ int main()
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window, scroll_callback);
+	//glfwSetCursorPosCallback(window, cursor_position_callback);
 
     // flags
     glEnable(GL_DEPTH_TEST);
@@ -112,7 +118,7 @@ int main()
         lastFrame = currentFrame;
 
         // check keyboard input
-        processInput(window);
+        processInput(window, io);
 
         // update the view and projection matrices
         view = camera.getViewMatrix();
@@ -175,17 +181,48 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-
+// callback function for scroll input
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     camera.scrollInput(window, -yoffset);
 }
 
 // function for checking keyboard inputs
-void processInput(GLFWwindow* window) 
+void processInput(GLFWwindow* window, ImGuiIO& io) 
 {
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) 
+    {
         glfwSetWindowShouldClose(window, true);
     }
 
+    if (!io.WantCaptureMouse)
+    {
+        cursor_position_callback(window, io.MousePos.x, io.MousePos.y);
+    }
+}
+
+void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)
+{
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+    {
+        if (firstMouse)
+        {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        double xoffset = xpos - lastX;
+        double yoffset = lastY - ypos; // Y-coordinates go from bottom to top
+
+        lastX = xpos;
+        lastY = ypos;
+
+	    // Use xoffset and yoffset to rotate the camera the opposite direction of the cursor movement
+	    camera.mouseInput(window, -xoffset, -yoffset);
+	}
+    else 
+    {
+		firstMouse = true;
+    }
 }

@@ -31,8 +31,10 @@ Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragmen
 	std::vector<unsigned int> attributeLengths = { 3 }; // one attribute (position) with three coordinates
 	va.setFormat(attributeLengths, 3);
 
-	// load the skybox texture
+	// load the skybox texture and flip it vertically
+	stbi_set_flip_vertically_on_load(true);
 	shader.addTexture("res/skybox_cubemaps/photo_studio.hdr", "u_skyMap");
+	stbi_set_flip_vertically_on_load(false);
 }
 
 

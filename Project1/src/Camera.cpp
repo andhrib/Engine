@@ -24,6 +24,30 @@ void Camera::scrollInput(GLFWwindow* window, float value)
 	}
 }
 
+void Camera::mouseInput(GLFWwindow* window, double xoffset, double yoffset)
+{
+	// update the yaw and pitch values while taking into account the sensitivity
+	yaw += xoffset * sensitivity;
+	pitch += yoffset * sensitivity;
+
+	// keep the pitch in the range (-89.0f, 89.0f) to avoid flipping the camera
+	if (pitch > 89.0f) {
+		pitch = 89.0f;
+	}
+	else if (pitch < -89.0f) {
+		pitch = -89.0f;
+	}
+
+	// update the front, right, and up vectors using the updated yaw and pitch values
+	glm::vec3 newFront;
+	newFront.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+	newFront.y = sin(glm::radians(pitch));
+	newFront.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+	front = glm::normalize(newFront);
+	right = glm::normalize(glm::cross(front, worldUp));
+	up = glm::normalize(glm::cross(right, front));	
+}
+
 glm::mat4 Camera::getViewMatrix() const
 {
 	return glm::lookAt(position, position + front, up);
