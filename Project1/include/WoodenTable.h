@@ -6,6 +6,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+#include <vector>
+
 #include "Shader.h"
 #include "Model.h"
 
@@ -25,7 +27,11 @@ public:
 	float rotSpeed;
 
 public:
-	WoodenTable();
+	WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos);
 	void draw(glm::mat4& view, glm::mat4& projection, float deltaTime);
+
+private:
+	// set the light positions in the shader
+	void setLightPositions(std::vector<glm::vec3>& lightCubePositions);
 };
 

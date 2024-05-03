@@ -42,7 +42,7 @@ std::vector<glm::vec3> lightCubePositions = {
 };
 
 // create the camera object
-const glm::vec3 cameraPos = glm::vec3(-1.0f, 2.0f, 10.0f);
+const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 14.0f);
 Camera camera(cameraPos);
 
 
@@ -88,11 +88,11 @@ int main()
 
     // flags
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
 
     // the objects to be drawn into the scene
-    WoodenTable woodenTable;
+    WoodenTable woodenTable(lightCubePositions, cameraPos);
     LightCube lightCube(lightCubePositions);
 
     // initialize the view and projection matrices
@@ -112,7 +112,7 @@ int main()
 
         // update the view and projection matrices
         view = camera.getViewMatrix();
-        projection = glm::perspective(camera.getFOV(), windowWidth / windowHeight, near, far);
+        projection = glm::perspective(glm::radians(camera.getFOV()), windowWidth / windowHeight, near, far);
 
         // rendering commands
         // clear the screen
@@ -143,7 +143,6 @@ int main()
         // check and call events, then swap the buffers
         glfwSwapBuffers(window);
         glfwPollEvents();
-
     }
     // terminate ImGui
     ImGui_ImplOpenGL3_Shutdown();
@@ -164,7 +163,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-    camera.scrollInput(window, yoffset);
+    camera.scrollInput(window, -yoffset);
 }
 
 // function for checking keyboard inputs
