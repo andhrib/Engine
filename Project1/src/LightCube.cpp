@@ -37,6 +37,7 @@ void LightCube::draw(glm::mat4& view, glm::mat4& projection)
 {
 	va.bind();
 	shader.use();
+	shader.setActiveTextures();
 	// setting the uniforms
 	shader.setMat4("u_view", view);
 	shader.setMat4("u_projection", projection);

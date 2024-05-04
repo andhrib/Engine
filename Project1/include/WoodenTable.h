@@ -11,24 +11,37 @@
 #include "Shader.h"
 #include "Model.h"
 
+enum LightingType
+{
+	POINT_LIGHT = 0,
+	DIRECTIONAL_LIGHT = 1
+};
+
 class WoodenTable
 {
 private:
 	Model model;
 	Shader shader;
 
-	// we keep the model matrix stored in between frames for rotation purposes
-	glm::mat4 modelMat;
+	// the model matrix is kept stored in between frames for rotation purposes
+	glm::mat4 rotationMat;
 
 public:
 	// the rotation axis
 	glm::vec3 axis;
 	// the rotation speed
 	float rotSpeed;
+	// the position of the wooden table
+	glm::vec3 position;
+	// the direction of the directional light
+	glm::vec3 dirLightDirection;
+	// the lighting type
+	LightingType lightingType;
 
 public:
 	WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos);
 	void draw(glm::mat4& view, glm::mat4& projection, float deltaTime);
+	void setLightingType(LightingType lt);
 
 private:
 	// set the light positions in the shader

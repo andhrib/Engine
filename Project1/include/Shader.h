@@ -25,7 +25,11 @@ public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader() {}
 	~Shader();
+	// use the shader program
 	void use() const;
+	// set all textures to active
+	void setActiveTextures();
+	// add a texture to the shader program
 	void addTexture(const std::string& path, const std::string& uniform_name);
 
 	// uniform setting functions

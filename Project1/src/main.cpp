@@ -136,7 +136,9 @@ int main()
 
         // draw the objects
         woodenTable.draw(view, projection, deltaTime);
-        lightCube.draw(view, projection);
+        if (woodenTable.lightingType == POINT_LIGHT) {
+            lightCube.draw(view, projection);
+        }
 
 		// draw the skybox last, when the depth buffer is full
         // disable face culling for the skybox
@@ -151,10 +153,60 @@ int main()
 
         // configure the Imgui window
         ImGui::Begin("Window");
-        ImGui::SliderFloat("Rotation speed", &(woodenTable.rotSpeed), 0.0f, 60.0f);
-        ImGui::SliderFloat("X axis", &(woodenTable.axis.x), 0.0f, 1.0f);
-        ImGui::SliderFloat("Y axis", &(woodenTable.axis.y), 0.0f, 1.0f);
-        ImGui::SliderFloat("Z axis", &(woodenTable.axis.z), 0.0f, 1.0f);
+		// set the width of the sliders
+        float spacing = ImGui::GetStyle().ItemSpacing.x;
+        float padding = ImGui::GetStyle().WindowPadding.x;
+        float width = (ImGui::GetContentRegionAvail().x - 2 * spacing - 2 * padding) / 6;
+        float width3 = 3 * width + 2 * spacing;
+        // the header for configuring the model settings
+        if (ImGui::TreeNode("Model")) 
+        {
+            ImGui::PushItemWidth(width3);
+            ImGui::SliderFloat("Rotation speed", &(woodenTable.rotSpeed), 0.0f, 60.0f);
+
+            ImGui::PushItemWidth(width);
+            ImGui::SliderFloat("##x_axis", &(woodenTable.axis.x), 0.0f, 1.0f);
+			ImGui::SameLine();
+            ImGui::SliderFloat("##y_axis", &(woodenTable.axis.y), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_axis", &(woodenTable.axis.z), 0.0f, 1.0f);
+            ImGui::SameLine();
+			ImGui::Text("Rotation axis");
+
+            ImGui::PushItemWidth(width);
+            ImGui::SliderFloat("##x_pos", &(woodenTable.position.x), -25.0f, 25.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##y_pos", &(woodenTable.position.y), -25.0f, 25.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_pos", &(woodenTable.position.z), -25.0f, 25.0f);
+            ImGui::SameLine();
+            ImGui::Text("Position");
+
+			ImGui::TreePop();
+        }
+        // the header for configuring the lighting settings
+        if (ImGui::TreeNode("Lighting"))
+        {
+            // radio button list for selecting the lighting type
+            if (ImGui::TreeNode("Type"))
+            {
+                static int selectedItem = 0;
+                const char* items[] = { "Point", "Directional" };
+
+                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+                {
+                    if (ImGui::RadioButton(items[n], selectedItem == n)) 
+                    {
+                        selectedItem = n;
+						woodenTable.setLightingType((LightingType)n);
+                    }
+                }
+                ImGui::TreePop();
+            }
+
+            ImGui::TreePop();
+        }
+
         ImGui::End();
 
         // render Imgui
@@ -187,7 +239,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     camera.scrollInput(window, -yoffset);
 }
 
-// function for checking keyboard inputs
+// function for checking keyboard inputs and for setting callbacks that conflict with ImGui
 void processInput(GLFWwindow* window, ImGuiIO& io) 
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) 

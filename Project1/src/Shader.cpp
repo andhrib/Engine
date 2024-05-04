@@ -88,7 +88,11 @@ Shader::~Shader()
 void Shader::use() const
 {
 	glUseProgram(shaderProgram);
-	for (unsigned int i = 0; i < (unsigned int) textures.size(); i++) {
+}
+
+void Shader::setActiveTextures()
+{
+	for (unsigned int i = 0; i < (unsigned int)textures.size(); i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
 		glBindTexture(GL_TEXTURE_2D, textures[i]);
 	}

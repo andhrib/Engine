@@ -42,6 +42,7 @@ void Skybox::draw(glm::mat4& view, glm::mat4& projection)
 {
 	// bind the shader and vertex array
 	shader.use();
+	shader.setActiveTextures();
 	va.bind();
 	// setting the uniforms
 	// the skybox should not be affected by translation, so we need to modify the view matrix
