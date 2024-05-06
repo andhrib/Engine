@@ -37,8 +37,8 @@ Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragmen
 	stbi_set_flip_vertically_on_load(false);
 	// set the texture uniform
 	shader.addTextureUniform("u_skyMap", 0);
-	// set the default configuration to photo studio
-	shader.changeConfiguration("u_skyMap", "photo_studio");
+	// set the default material to photo studio
+	shader.changeMaterial("u_skyMap", "photo_studio");
 }
 
 

@@ -43,8 +43,8 @@ const float far = 100.0f;
 
 // lighting parameters
 std::vector<glm::vec3> lightCubePositions = {
-    glm::vec3(3.0f, 4.0f, -7.0f),
-    glm::vec3(-10.0f, -2.0f, -3.0f)
+    glm::vec3(3.0f, 2.0f, -1.0f),
+    glm::vec3(-2.0f, -2.0f, -3.0f)
 };
 
 // create the camera object
@@ -194,7 +194,7 @@ int main()
                 if (ImGui::RadioButton(items[n], selectedItem == n))
                 {
                     selectedItem = n;
-					woodenTable.setConfiguration((ConfigurationType)n);
+					woodenTable.setMaterial((MaterialType)n);
                 }
             }
 

@@ -116,7 +116,7 @@ void Shader::addTextureUniform(const std::string& uniform_name, int location)
 	setInt(uniform_name, location);
 }
 
-void Shader::changeConfiguration(const std::string& uniform_name, const std::string& texture_name)
+void Shader::changeMaterial(const std::string& uniform_name, const std::string& texture_name)
 {
 	configuration.at(uniform_name) = texture_name;
 }

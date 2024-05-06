@@ -17,7 +17,7 @@ enum LightingType
 	DIRECTIONAL_LIGHT = 1
 };
 
-enum ConfigurationType
+enum MaterialType
 {
 	WOOD = 0,
 	METAL = 1
@@ -48,7 +48,7 @@ public:
 	WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos);
 	void draw(glm::mat4& view, glm::mat4& projection, float deltaTime);
 	void setLightingType(LightingType lt);
-	void setConfiguration(ConfigurationType ct);
+	void setMaterial(MaterialType ct);
 
 private:
 	// set the light positions in the shader

@@ -9,6 +9,11 @@ struct Material
 {
 	sampler2D texture_albedo;
 	sampler2D texture_specular;
+
+	float ambientStrength;
+	float diffuseStrength;
+	float specularStrength;
+	float shininess;
 };
 
 in vec3 normal;
@@ -52,10 +57,7 @@ void main()
 
 vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir) 
 {
-	float ambientStrength = 0.005;
-	float specularStrength = 0.5;
-	float pointLightStrength = 7.0;
-	vec3 pointLight = ambientStrength * albedoColor;
+	vec3 pointLight = u_material.ambientStrength * albedoColor;
 
 	for (int i = 0; i < NUM_OF_LIGHTS; i++) 
 	{
@@ -65,9 +67,10 @@ vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 view
 		vec3 reflectDir = reflect(-lightDir, normal);
 		// diffuse component
 		float diff = max(dot(normal, lightDir), 0.0);
+		diff *= u_material.diffuseStrength;
 		// specular component
-		float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-		spec *= specularStrength;
+		float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
+		spec *= u_material.specularStrength;
 		// attenuation
 		float distance = length(u_lightPositions[i] - fragPos);
 		float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * distance * distance);
@@ -75,15 +78,12 @@ vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 view
 		pointLight += (diff * albedoColor + spec * specularColor) * attenuation;
 	}
 
-	return pointLight * pointLightStrength;
+	return pointLight;
 }
 
 vec3 calcDirLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir) 
 {
-	float ambientStrength = 0.005;
-	float specularStrength = 0.5;
-	float dirLightStrength = 4.0;
-	vec3 dirLight = ambientStrength * albedoColor;
+	vec3 dirLight = u_material.ambientStrength * albedoColor;
 
 	// unit vector that points from the fragment to the light source
 	vec3 lightDir = normalize(-u_dirLightDirection);
@@ -91,11 +91,12 @@ vec3 calcDirLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDi
 	vec3 reflectDir = reflect(-lightDir, normal);
 	// diffuse component
 	float diff = max(dot(normal, lightDir), 0.0);
+	diff *= u_material.diffuseStrength;
 	// specular component
-	float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
-	spec *= specularStrength;
+	float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_material.shininess);
+	spec *= u_material.specularStrength;
 	// add the diffuse and specular components to the dirLight color
 	dirLight += (diff * albedoColor + spec * specularColor);
 
-	return dirLight * dirLightStrength;
+	return dirLight;
 }
