@@ -92,18 +92,33 @@ void Shader::use() const
 
 void Shader::setActiveTextures()
 {
-	for (unsigned int i = 0; i < (unsigned int)textures.size(); i++) {
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textures[i]);
+	for (const std::pair<std::string, std::string>& c : configuration) 
+	{
+		const std::string& uniform_name = c.first;
+		const std::string& texture_name = c.second;
+		glActiveTexture(GL_TEXTURE0 + uniformMap.at(uniform_name));
+		glBindTexture(GL_TEXTURE_2D, textureMap.at(texture_name));
 	}
 }
 
-void Shader::addTexture(const std::string& path, const std::string& uniform_name)
+void Shader::addTexture(const std::string& path, const std::string& texture_name)
 {
 	glUseProgram(shaderProgram);
 	unsigned int textureID = loadTexture(path.c_str());
-	setInt(uniform_name, (int)textures.size());
-	textures.push_back(textureID);
+	textureMap[texture_name] = textureID;
+}
+
+void Shader::addTextureUniform(const std::string& uniform_name, int location)
+{
+	uniformMap[uniform_name] = location;
+	configuration[uniform_name] = "not set";
+	use();
+	setInt(uniform_name, location);
+}
+
+void Shader::changeConfiguration(const std::string& uniform_name, const std::string& texture_name)
+{
+	configuration.at(uniform_name) = texture_name;
 }
 
 unsigned int Shader::loadTexture(char const* path)

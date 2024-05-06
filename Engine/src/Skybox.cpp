@@ -33,8 +33,12 @@ Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragmen
 
 	// load the skybox texture and flip it vertically
 	stbi_set_flip_vertically_on_load(true);
-	shader.addTexture("res/skybox_cubemaps/photo_studio.hdr", "u_skyMap");
+	shader.addTexture("res/skybox_cubemaps/photo_studio.hdr", "photo_studio");
 	stbi_set_flip_vertically_on_load(false);
+	// set the texture uniform
+	shader.addTextureUniform("u_skyMap", 0);
+	// set the default configuration to photo studio
+	shader.changeConfiguration("u_skyMap", "photo_studio");
 }
 
 

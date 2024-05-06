@@ -184,6 +184,22 @@ int main()
 
 			ImGui::TreePop();
         }
+        // the header for configuring the material settings
+        if (ImGui::TreeNode("Material")) {
+            static int selectedItem = 0;
+            const char* items[] = { "Wood", "Metal" };
+
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                if (ImGui::RadioButton(items[n], selectedItem == n))
+                {
+                    selectedItem = n;
+					woodenTable.setConfiguration((ConfigurationType)n);
+                }
+            }
+
+            ImGui::TreePop();
+        }
         // the header for configuring the lighting settings
         if (ImGui::TreeNode("Lighting"))
         {

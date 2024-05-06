@@ -7,8 +7,18 @@ lightingType(POINT_LIGHT)
 {
 	// set the textures
     shader.use();
-	shader.addTexture("res/models/wooden_table/Albedo.jpg", "u_material.texture_albedo");
-	shader.addTexture("res/models/wooden_table/Metallic.jpg", "u_material.texture_specular");
+	shader.addTexture("res/models/wooden_table/Albedo.jpg", "wood_albedo");
+	shader.addTexture("res/models/wooden_table/Metallic.jpg", "wood_specular");
+	shader.addTexture("res/textures/metal/metal_albedo.jpg", "metal_albedo");
+	shader.addTexture("res/textures/metal/metal_specular.jpg", "metal_specular");
+
+	// set the texture uniforms
+	shader.addTextureUniform("u_material.texture_albedo", 0);
+	shader.addTextureUniform("u_material.texture_specular", 1);
+
+	// the default configuration is wood
+	shader.changeConfiguration("u_material.texture_albedo", "wood_albedo");
+	shader.changeConfiguration("u_material.texture_specular", "wood_specular");
 
 	// set the camera position
 	shader.setVec3("u_cameraPos", cameraPos);
@@ -50,6 +60,20 @@ void WoodenTable::setLightingType(LightingType lt)
 		lightingType = lt;
 		shader.use();
 		shader.setInt("u_lightingType", lightingType);
+	}
+}
+
+void WoodenTable::setConfiguration(ConfigurationType ct)
+{
+	if (ct == WOOD)
+	{
+		shader.changeConfiguration("u_material.texture_albedo", "wood_albedo");
+		shader.changeConfiguration("u_material.texture_specular", "wood_specular");
+	}
+	else if (ct == METAL)
+	{
+		shader.changeConfiguration("u_material.texture_albedo", "metal_albedo");
+		shader.changeConfiguration("u_material.texture_specular", "metal_specular");
 	}
 }
 
