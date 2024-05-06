@@ -187,7 +187,7 @@ int main()
         // the header for configuring the material settings
         if (ImGui::TreeNode("Material")) {
             static int selectedItem = 0;
-            const char* items[] = { "Wood", "Metal" };
+            const char* items[] = { "Wood", "Metal", "Rock" };
 
             for (int n = 0; n < IM_ARRAYSIZE(items); n++)
             {

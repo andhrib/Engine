@@ -11,6 +11,8 @@ lightingType(POINT_LIGHT)
 	shader.addTexture("res/models/wooden_table/Metallic.jpg", "wood_specular");
 	shader.addTexture("res/textures/metal/metal_albedo.jpg", "metal_albedo");
 	shader.addTexture("res/textures/metal/metal_specular.jpg", "metal_specular");
+	shader.addTexture("res/textures/rock/rock_albedo.jpg", "rock_albedo");
+	shader.addTexture("res/textures/rock/rock_specular.jpg", "rock_specular");
 
 	// set the texture uniforms
 	shader.addTextureUniform("u_material.texture_albedo", 0);
@@ -67,23 +69,32 @@ void WoodenTable::setLightingType(LightingType lt)
 void WoodenTable::setMaterial(MaterialType ct)
 {
 	shader.use();
-	if (ct == WOOD)
-	{
+	switch (ct) {
+	case WOOD:
 		shader.changeMaterial("u_material.texture_albedo", "wood_albedo");
 		shader.changeMaterial("u_material.texture_specular", "wood_specular");
 		shader.setFloat("u_material.ambientStrength", 0.005f);
 		shader.setFloat("u_material.diffuseStrength", 1.0f);
 		shader.setFloat("u_material.specularStrength", 0.5f);
 		shader.setFloat("u_material.shininess", 32.0f);
-	}
-	else if (ct == METAL)
-	{
+		break;
+	case METAL:
 		shader.changeMaterial("u_material.texture_albedo", "metal_albedo");
 		shader.changeMaterial("u_material.texture_specular", "metal_specular");
 		shader.setFloat("u_material.ambientStrength", 0.005f);
 		shader.setFloat("u_material.diffuseStrength", 1.0f);
 		shader.setFloat("u_material.specularStrength", 0.5f);
 		shader.setFloat("u_material.shininess", 32.0f);
+		break;
+	case ROCK:
+		shader.changeMaterial("u_material.texture_albedo", "rock_albedo");
+		shader.changeMaterial("u_material.texture_specular", "rock_specular");
+		shader.setFloat("u_material.ambientStrength", 0.005f);
+		shader.setFloat("u_material.diffuseStrength", 1.0f);
+		shader.setFloat("u_material.specularStrength", 0.5f);
+		shader.setFloat("u_material.shininess", 32.0f);
+		break;
+
 	}
 }
 

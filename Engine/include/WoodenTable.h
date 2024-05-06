@@ -20,7 +20,8 @@ enum LightingType
 enum MaterialType
 {
 	WOOD = 0,
-	METAL = 1
+	METAL = 1,
+	ROCK = 2
 };
 
 class WoodenTable
