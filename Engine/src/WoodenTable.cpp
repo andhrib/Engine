@@ -1,8 +1,10 @@
 #include "WoodenTable.h"
 
-WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos) : model("res/models/wooden_table/Wooden Table.dae"),
+WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos) : 
+model("res/models/wooden_table/Wooden Table.dae"),
 shader("res/shaders/vertex/woodenTable.vert", "res/shaders/fragment/woodenTable.frag"),
-rotationMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f), position(0.0f), dirLightDirection(-0.2f, -1.0f, -0.3f), 
+rotationMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f), position(0.0f), 
+dirLightDirection(-0.2f, -1.0f, -0.3f), 
 lightingType(POINT_LIGHT)
 {
 	// set the textures
@@ -39,19 +41,14 @@ lightingType(POINT_LIGHT)
     rotationMat = glm::scale(rotationMat, glm::vec3(0.1f));
 }
 
-void WoodenTable::draw(glm::mat4& view, glm::mat4& projection, float deltaTime)
+void WoodenTable::draw(glm::mat4& view, glm::mat4& projection)
 {
     // set the uniforms
     shader.use();
     shader.setMat4("u_view", view);
     shader.setMat4("u_projection", projection);
-    // model rotation
-    if (glm::length(axis) != 0) { // if axis == (0, 0, 0), remain still
-        rotationMat = glm::rotate(rotationMat, glm::radians(deltaTime) * rotSpeed, axis);
-    }
-	// model translation
-	glm::mat4 translationMat = glm::translate(glm::mat4(1.0f), position);
-    shader.setMat4("u_model", translationMat * rotationMat);
+    shader.setMat4("u_model", modelMat);
+	shader.setFloat("u_farPlane", SHADOW_FAR);
 
     model.draw(shader);
 }
@@ -95,6 +92,36 @@ void WoodenTable::setMaterial(MaterialType ct)
 		shader.setFloat("u_material.shininess", 32.0f);
 		break;
 
+	}
+}
+
+void WoodenTable::drawPointShadow(Shader& pointShadowShader)
+{
+	pointShadowShader.use();
+	pointShadowShader.setMat4("u_model", modelMat);
+	model.draw(pointShadowShader);
+}
+
+void WoodenTable::updateModelMatrix(float deltaTime)
+{
+	// model rotation
+	if (glm::length(axis) != 0) { // if axis == (0, 0, 0), remain still
+		rotationMat = glm::rotate(rotationMat, glm::radians(deltaTime) * rotSpeed, axis);
+	}
+	// model translation
+	translationMat = glm::translate(glm::mat4(1.0f), position);
+	modelMat = translationMat * rotationMat;
+}
+
+void WoodenTable::setPointShadowMaps(std::vector<unsigned int>& depthCubemaps)
+{
+	int startIdx = shader.getTextureCount();
+	shader.use();
+	for (int i = 0; i < depthCubemaps.size(); i++)
+	{
+		shader.setInt("u_pointShadowMap[" + std::to_string(i) + "]", startIdx + i);
+		glActiveTexture(GL_TEXTURE0 + startIdx + i);
+		glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemaps[i]);
 	}
 }
 

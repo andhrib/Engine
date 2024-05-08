@@ -10,6 +10,7 @@
 
 #include "Shader.h"
 #include "Model.h"
+#include "PointShadow.h"
 
 enum LightingType
 {
@@ -30,8 +31,10 @@ private:
 	Model model;
 	Shader shader;
 
-	// the model matrix is kept stored in between frames for rotation purposes
+	// the rotation matrix and translation matrix, used to calculate the model matrix
 	glm::mat4 rotationMat;
+	glm::mat4 translationMat;
+	glm::mat4 modelMat;
 
 public:
 	// the rotation axis
@@ -47,9 +50,12 @@ public:
 
 public:
 	WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos);
-	void draw(glm::mat4& view, glm::mat4& projection, float deltaTime);
+	void draw(glm::mat4& view, glm::mat4& projection);
 	void setLightingType(LightingType lt);
 	void setMaterial(MaterialType ct);
+	void drawPointShadow(Shader& pointShadowShader);
+	void updateModelMatrix(float deltaTime);
+	void setPointShadowMaps(std::vector<unsigned int>& depthCubemaps);
 
 private:
 	// set the light positions in the shader

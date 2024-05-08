@@ -16,6 +16,7 @@
 #include "LightCube.h"
 #include "WoodenTable.h"
 #include "Skybox.h"
+#include "PointShadow.h"
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -24,10 +25,11 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // other function prototypes
 void processInput(GLFWwindow* window, ImGuiIO& io);
+void renderUI(WoodenTable& woodenTable);
 
 // window size parameters
-const float windowWidth = 1080.0f;
-const float windowHeight = 720.0f;
+const int WINDOW_WIDTH = 1080;
+const int WINDOW_HEIGHT = 720;
 
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
@@ -38,19 +40,20 @@ double lastX, lastY;
 bool firstMouse = true;
 
 // view parameters
-const float near = 0.1f;
-const float far = 100.0f;
+const float NEAR = 0.1f;
+const float FAR = 100.0f;
 
 // lighting parameters
-std::vector<glm::vec3> lightCubePositions = {
+std::vector<glm::vec3> lightCubePositions = 
+{
     glm::vec3(3.0f, 2.0f, -1.0f),
-    glm::vec3(-2.0f, -2.0f, -3.0f)
+    glm::vec3(-2.0f, 3.0f, 5.0f),
+    glm::vec3(-2.0f, -2.0f, 4.0f)
 };
 
 // create the camera object
 const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 10.0f);
 Camera camera(cameraPos);
-
 
 int main()
 {
@@ -61,7 +64,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // create window
-    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Engine", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Engine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -86,7 +89,7 @@ int main()
     ImGui_ImplOpenGL3_Init("#version 460");
 
     // set the viewport
-    glViewport(0, 0, windowWidth, windowHeight);
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -105,6 +108,9 @@ int main()
     WoodenTable woodenTable(lightCubePositions, cameraPos);
     LightCube lightCube(lightCubePositions);
 
+    // the object to render the shadows
+	PointShadow pointShadow(lightCubePositions);
+
     // initialize the view and projection matrices
     glm::mat4 view(1.0f);
     glm::mat4 projection(1.0f);
@@ -120,13 +126,23 @@ int main()
         // check keyboard input
         processInput(window, io);
 
-        // update the view and projection matrices
+        // update the model, view and projection matrices
+		woodenTable.updateModelMatrix(deltaTime);
         view = camera.getViewMatrix();
-        projection = glm::perspective(glm::radians(camera.getFOV()), windowWidth / windowHeight, near, far);
+        projection = glm::perspective(glm::radians(camera.getFOV()), (float)WINDOW_WIDTH / WINDOW_HEIGHT, NEAR, FAR);
 
         // rendering commands
-        // clear the screen
-        glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
+		// render to the depth cubemap
+		pointShadow.prepareState();
+		for (int idx = 0; idx < lightCubePositions.size(); idx++)
+        {
+			pointShadow.configureShader(idx);
+			woodenTable.drawPointShadow(pointShadow.getShader());
+		}
+
+        // prepare state for ordinary drawing
+        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // start new frame in ImGui
@@ -135,95 +151,17 @@ int main()
         ImGui::NewFrame();
 
         // draw the objects
-        woodenTable.draw(view, projection, deltaTime);
+        woodenTable.setPointShadowMaps(pointShadow.getDepthCubemaps());
+        woodenTable.draw(view, projection);
         if (woodenTable.lightingType == POINT_LIGHT) {
             lightCube.draw(view, projection);
         }
 
 		// draw the skybox last, when the depth buffer is full
-        // disable face culling for the skybox
-		glDisable(GL_CULL_FACE);
-		// modify the depth function to draw the skybox
-        glDepthFunc(GL_LEQUAL);
 		skybox.draw(view, projection);
-		// re-enable face culling
-        glEnable(GL_CULL_FACE);
-		// reset the depth function to default
-        glDepthFunc(GL_LESS);
 
         // configure the Imgui window
-        ImGui::Begin("Window");
-		// set the width of the sliders
-        float spacing = ImGui::GetStyle().ItemSpacing.x;
-        float padding = ImGui::GetStyle().WindowPadding.x;
-        float width = (ImGui::GetContentRegionAvail().x - 2 * spacing - 2 * padding) / 6;
-        float width3 = 3 * width + 2 * spacing;
-        // the header for configuring the model settings
-        if (ImGui::TreeNode("Model")) 
-        {
-            ImGui::PushItemWidth(width3);
-            ImGui::SliderFloat("Rotation speed", &(woodenTable.rotSpeed), 0.0f, 60.0f);
-
-            ImGui::PushItemWidth(width);
-            ImGui::SliderFloat("##x_axis", &(woodenTable.axis.x), 0.0f, 1.0f);
-			ImGui::SameLine();
-            ImGui::SliderFloat("##y_axis", &(woodenTable.axis.y), 0.0f, 1.0f);
-            ImGui::SameLine();
-            ImGui::SliderFloat("##z_axis", &(woodenTable.axis.z), 0.0f, 1.0f);
-            ImGui::SameLine();
-			ImGui::Text("Rotation axis");
-
-            ImGui::PushItemWidth(width);
-            ImGui::SliderFloat("##x_pos", &(woodenTable.position.x), -25.0f, 25.0f);
-            ImGui::SameLine();
-            ImGui::SliderFloat("##y_pos", &(woodenTable.position.y), -25.0f, 25.0f);
-            ImGui::SameLine();
-            ImGui::SliderFloat("##z_pos", &(woodenTable.position.z), -25.0f, 25.0f);
-            ImGui::SameLine();
-            ImGui::Text("Position");
-
-			ImGui::TreePop();
-        }
-        // the header for configuring the material settings
-        if (ImGui::TreeNode("Material")) {
-            static int selectedItem = 0;
-            const char* items[] = { "Wood", "Metal", "Rock" };
-
-            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-            {
-                if (ImGui::RadioButton(items[n], selectedItem == n))
-                {
-                    selectedItem = n;
-					woodenTable.setMaterial((MaterialType)n);
-                }
-            }
-
-            ImGui::TreePop();
-        }
-        // the header for configuring the lighting settings
-        if (ImGui::TreeNode("Lighting"))
-        {
-            // radio button list for selecting the lighting type
-            if (ImGui::TreeNode("Type"))
-            {
-                static int selectedItem = 0;
-                const char* items[] = { "Point", "Directional" };
-
-                for (int n = 0; n < IM_ARRAYSIZE(items); n++)
-                {
-                    if (ImGui::RadioButton(items[n], selectedItem == n)) 
-                    {
-                        selectedItem = n;
-						woodenTable.setLightingType((LightingType)n);
-                    }
-                }
-                ImGui::TreePop();
-            }
-
-            ImGui::TreePop();
-        }
-
-        ImGui::End();
+		renderUI(woodenTable);
 
         // render Imgui
         ImGui::Render();
@@ -241,6 +179,82 @@ int main()
     // terminate GLFW
     glfwTerminate();
 	return 0;
+}
+
+void renderUI(WoodenTable& woodenTable) 
+{
+    ImGui::Begin("Window");
+    // set the width of the sliders
+    float spacing = ImGui::GetStyle().ItemSpacing.x;
+    float padding = ImGui::GetStyle().WindowPadding.x;
+    float width = (ImGui::GetContentRegionAvail().x - 2 * spacing - 2 * padding) / 6;
+    float width3 = 3 * width + 2 * spacing;
+    // the header for configuring the model settings
+    if (ImGui::TreeNode("Model"))
+    {
+        ImGui::PushItemWidth(width3);
+        ImGui::SliderFloat("Rotation speed", &(woodenTable.rotSpeed), 0.0f, 60.0f);
+
+        ImGui::PushItemWidth(width);
+        ImGui::SliderFloat("##x_axis", &(woodenTable.axis.x), 0.0f, 1.0f);
+        ImGui::SameLine();
+        ImGui::SliderFloat("##y_axis", &(woodenTable.axis.y), 0.0f, 1.0f);
+        ImGui::SameLine();
+        ImGui::SliderFloat("##z_axis", &(woodenTable.axis.z), 0.0f, 1.0f);
+        ImGui::SameLine();
+        ImGui::Text("Rotation axis");
+
+        ImGui::PushItemWidth(width);
+        ImGui::SliderFloat("##x_pos", &(woodenTable.position.x), -25.0f, 25.0f);
+        ImGui::SameLine();
+        ImGui::SliderFloat("##y_pos", &(woodenTable.position.y), -25.0f, 25.0f);
+        ImGui::SameLine();
+        ImGui::SliderFloat("##z_pos", &(woodenTable.position.z), -25.0f, 25.0f);
+        ImGui::SameLine();
+        ImGui::Text("Position");
+
+        ImGui::TreePop();
+    }
+    // the header for configuring the material settings
+    if (ImGui::TreeNode("Material")) {
+        static int selectedItem = 0;
+        const char* items[] = { "Wood", "Metal", "Rock" };
+
+        for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+        {
+            if (ImGui::RadioButton(items[n], selectedItem == n))
+            {
+                selectedItem = n;
+                woodenTable.setMaterial((MaterialType)n);
+            }
+        }
+
+        ImGui::TreePop();
+    }
+    // the header for configuring the lighting settings
+    if (ImGui::TreeNode("Lighting"))
+    {
+        // radio button list for selecting the lighting type
+        if (ImGui::TreeNode("Type"))
+        {
+            static int selectedItem = 0;
+            const char* items[] = { "Point", "Directional" };
+
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                if (ImGui::RadioButton(items[n], selectedItem == n))
+                {
+                    selectedItem = n;
+                    woodenTable.setLightingType((LightingType)n);
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::TreePop();
+    }
+
+    ImGui::End();
 }
 
 // callback function for resizing the window

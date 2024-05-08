@@ -18,7 +18,6 @@ class Shader
 {
 private:
 	unsigned int shaderProgram;
-	std::vector<unsigned int> textures;
 	// maps texture names to their id
 	std::unordered_map<std::string, unsigned int> textureMap;
 	// maps uniform names to their location
@@ -26,10 +25,9 @@ private:
 	// maps uniform names to the texture is sent to it
 	std::unordered_map<std::string, std::string> configuration;
 
-	unsigned int loadTexture(char const* path);
-
 public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
+	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
 	Shader() {}
 	~Shader();
 	// use the shader program
@@ -46,5 +44,14 @@ public:
 	void setVec3(const std::string& name, const glm::vec3& value) const;
 	void setInt(const std::string& name, int value) const;
 	void setFloat(const std::string& name, float value) const;
+
+	// getter functions
+	int getTextureCount() const;
+
+private:
+	// load the texture from the path
+	unsigned int loadTexture(char const* path);
+	// compile the shader from the path
+	unsigned int compileShader(const std::string& path, GLenum type);
 };
 

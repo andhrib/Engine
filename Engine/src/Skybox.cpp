@@ -44,6 +44,10 @@ Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragmen
 
 void Skybox::draw(glm::mat4& view, glm::mat4& projection)
 {
+	// disable face culling for the skybox
+	glDisable(GL_CULL_FACE);
+	// modify the depth function to draw the skybox
+	glDepthFunc(GL_LEQUAL);
 	// bind the shader and vertex array
 	shader.use();
 	shader.setActiveTextures();
@@ -55,4 +59,8 @@ void Skybox::draw(glm::mat4& view, glm::mat4& projection)
 	shader.setMat4("u_projection", projection);
 	// draw
 	glDrawElements(GL_TRIANGLES, ebData.size(), GL_UNSIGNED_INT, 0);
+	// re-enable face culling
+	glEnable(GL_CULL_FACE);
+	// reset the depth function to default
+	glDepthFunc(GL_LESS);
 }

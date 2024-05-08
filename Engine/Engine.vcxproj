@@ -156,6 +156,7 @@
     <ClInclude Include="include\LightCube.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\PointShadow.h" />
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\VertexArray.h" />
     <ClInclude Include="include\VertexBuffer.h" />
@@ -172,6 +173,8 @@
     <ClCompile Include="include\external\imgui\imgui_tables.cpp" />
     <ClCompile Include="include\external\imgui\imgui_widgets.cpp" />
     <ClCompile Include="include\external\stbi\stb_image.cpp" />
+    <ClCompile Include="src\DirectionalShadow.cpp" />
+    <ClCompile Include="src\PointShadow.cpp" />
     <ClCompile Include="src\Skybox.cpp" />
     <ClCompile Include="src\Camera.cpp" />
     <ClCompile Include="src\ElementBuffer.cpp" />
@@ -186,9 +189,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\models\wooden_table\Wooden Table.dae" />
+    <None Include="res\shaders\fragment\pointShadow.frag" />
     <None Include="res\shaders\fragment\skybox.frag" />
     <None Include="res\shaders\fragment\woodenTable.frag" />
     <None Include="res\shaders\fragment\lightCube.frag" />
+    <None Include="res\shaders\geometry\pointShadow.geom" />
+    <None Include="res\shaders\vertex\pointShadow.vert" />
     <None Include="res\shaders\vertex\skybox.vert" />
     <None Include="res\shaders\vertex\woodenTable.vert" />
     <None Include="res\shaders\vertex\lightCube.vert" />
