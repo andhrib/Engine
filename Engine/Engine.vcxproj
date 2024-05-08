@@ -141,6 +141,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h" />
+    <ClInclude Include="include\DirectionalShadow.h" />
     <ClInclude Include="include\ElementBuffer.h" />
     <ClInclude Include="include\external\glad\glad.h" />
     <ClInclude Include="include\external\imgui\imconfig.h" />
@@ -189,11 +190,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\models\wooden_table\Wooden Table.dae" />
+    <None Include="res\shaders\fragment\directionalShadow.frag" />
     <None Include="res\shaders\fragment\pointShadow.frag" />
     <None Include="res\shaders\fragment\skybox.frag" />
     <None Include="res\shaders\fragment\woodenTable.frag" />
     <None Include="res\shaders\fragment\lightCube.frag" />
     <None Include="res\shaders\geometry\pointShadow.geom" />
+    <None Include="res\shaders\vertex\directionalShadow.vert" />
     <None Include="res\shaders\vertex\pointShadow.vert" />
     <None Include="res\shaders\vertex\skybox.vert" />
     <None Include="res\shaders\vertex\woodenTable.vert" />

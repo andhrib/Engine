@@ -26,11 +26,6 @@ PointShadow::PointShadow(std::vector<glm::vec3>& lightCubePositions) :
 	setupShadows(lightCubePositions);
 }
 
-void PointShadow::prepareState()
-{
-	glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-}
-
 Shader& PointShadow::getShader()
 {
 	return shader;
@@ -51,15 +46,15 @@ void PointShadow::configureShader(int idx)
 	{
 		shader.setMat4("u_lightSpaceMatrices[" + std::to_string(i) + "]", lightSpaceMatrices[idx][i]);
 	}
-	shader.setFloat("u_farPlane", SHADOW_FAR);
+	shader.setFloat("u_farPlane", POINT_SHADOW_FAR);
 	shader.setVec3("u_lightPos", lightCubePositions[idx]);
 }
 
 void PointShadow::setupShadows(std::vector<glm::vec3>& lightCubePositions)
 {
 	// parameters for the light space matrices
-	float aspect = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
-	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), aspect, SHADOW_NEAR, SHADOW_FAR);
+	float aspect = (float)POINT_SHADOW_WIDTH / (float)POINT_SHADOW_HEIGHT;
+	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), aspect, POINT_SHADOW_NEAR, POINT_SHADOW_FAR);
 	// create the depth cube maps
 	for (int i = 0; i < lightCubePositions.size(); i++)
 	{
@@ -70,7 +65,7 @@ void PointShadow::setupShadows(std::vector<glm::vec3>& lightCubePositions)
 		for (int j = 0; j < 6; j++)
 		{
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + j, 0, GL_DEPTH_COMPONENT, 
-				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+				POINT_SHADOW_WIDTH, POINT_SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 		}
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

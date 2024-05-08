@@ -1,10 +1,10 @@
 #include "WoodenTable.h"
 
-WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos) : 
+WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection) : 
 model("res/models/wooden_table/Wooden Table.dae"),
 shader("res/shaders/vertex/woodenTable.vert", "res/shaders/fragment/woodenTable.frag"),
 rotationMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f), position(0.0f), 
-dirLightDirection(-0.2f, -1.0f, -0.3f), 
+dirLightDirection(dirLightDirection), 
 lightingType(POINT_LIGHT)
 {
 	// set the textures
@@ -37,6 +37,9 @@ lightingType(POINT_LIGHT)
 	// set the directional light direction in the shader
 	shader.setVec3("u_dirLightDirection", dirLightDirection);
 
+	// set the shadow far plane
+	shader.setFloat("u_farPlane", POINT_SHADOW_FAR);
+
 	// make the table 10 times smaller than the original size
     rotationMat = glm::scale(rotationMat, glm::vec3(0.1f));
 }
@@ -47,8 +50,7 @@ void WoodenTable::draw(glm::mat4& view, glm::mat4& projection)
     shader.use();
     shader.setMat4("u_view", view);
     shader.setMat4("u_projection", projection);
-    shader.setMat4("u_model", modelMat);
-	shader.setFloat("u_farPlane", SHADOW_FAR);
+	shader.setMat4("u_model", modelMat);
 
     model.draw(shader);
 }
@@ -95,11 +97,11 @@ void WoodenTable::setMaterial(MaterialType ct)
 	}
 }
 
-void WoodenTable::drawPointShadow(Shader& pointShadowShader)
+void WoodenTable::drawShadow(Shader& shadowShader)
 {
-	pointShadowShader.use();
-	pointShadowShader.setMat4("u_model", modelMat);
-	model.draw(pointShadowShader);
+	shadowShader.use();
+	shadowShader.setMat4("u_model", modelMat);
+	model.draw(shadowShader);
 }
 
 void WoodenTable::updateModelMatrix(float deltaTime)
@@ -123,6 +125,20 @@ void WoodenTable::setPointShadowMaps(std::vector<unsigned int>& depthCubemaps)
 		glActiveTexture(GL_TEXTURE0 + startIdx + i);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubemaps[i]);
 	}
+}
+
+void WoodenTable::setDirShadowMap(unsigned int depthMap)
+{
+	shader.use();
+	shader.setInt("u_dirShadowMap", shader.getTextureCount());
+	glActiveTexture(GL_TEXTURE0 + shader.getTextureCount());
+	glBindTexture(GL_TEXTURE_2D, depthMap);
+}
+
+void WoodenTable::setLightSpaceMatrix(glm::mat4 lightSpaceMatrix)
+{
+	shader.use();
+	shader.setMat4("u_lightSpaceMatrix", lightSpaceMatrix);
 }
 
 void WoodenTable::setLightPositions(std::vector<glm::vec3>& lightCubePositions)

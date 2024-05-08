@@ -10,10 +10,10 @@
 
 #include "Shader.h"
 
-const unsigned int SHADOW_WIDTH = 1024;
-const unsigned int SHADOW_HEIGHT = 1024;
-const float SHADOW_NEAR = 1.0f;
-const float SHADOW_FAR = 25.0f;
+const unsigned int POINT_SHADOW_WIDTH = 1024;
+const unsigned int POINT_SHADOW_HEIGHT = 1024;
+const float POINT_SHADOW_NEAR = 1.0f;
+const float POINT_SHADOW_FAR = 25.0f;
 
 class PointShadow
 {
@@ -35,7 +35,6 @@ private:
 
 public:
 	PointShadow(std::vector<glm::vec3>& lightCubePositions);
-	void prepareState();
 	void configureShader(int idx);
 	Shader& getShader();
 	std::vector<unsigned int>& getDepthCubemaps();

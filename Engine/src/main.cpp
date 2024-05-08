@@ -17,6 +17,7 @@
 #include "WoodenTable.h"
 #include "Skybox.h"
 #include "PointShadow.h"
+#include "DirectionalShadow.h"
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -50,6 +51,7 @@ std::vector<glm::vec3> lightCubePositions =
     glm::vec3(-2.0f, 3.0f, 5.0f),
     glm::vec3(-2.0f, -2.0f, 4.0f)
 };
+glm::vec3 dirLightDirection = glm::vec3(-5.0f, -5.0f, -5.0f);
 
 // create the camera object
 const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 10.0f);
@@ -105,11 +107,15 @@ int main()
     Skybox skybox;
 
     // the objects to be drawn into the scene
-    WoodenTable woodenTable(lightCubePositions, cameraPos);
+    WoodenTable woodenTable(lightCubePositions, cameraPos, dirLightDirection);
     LightCube lightCube(lightCubePositions);
 
     // the object to render the shadows
 	PointShadow pointShadow(lightCubePositions);
+    DirectionalShadow directionalShadow(dirLightDirection);
+
+	// set the light space matrices
+	woodenTable.setLightSpaceMatrix(directionalShadow.lightSpaceMatrix);
 
     // initialize the view and projection matrices
     glm::mat4 view(1.0f);
@@ -133,12 +139,22 @@ int main()
 
         // rendering commands
 		// render to the depth cubemap
-		pointShadow.prepareState();
-		for (int idx = 0; idx < lightCubePositions.size(); idx++)
+        glViewport(0, 0, POINT_SHADOW_WIDTH, POINT_SHADOW_HEIGHT);
+        switch (woodenTable.lightingType)
         {
-			pointShadow.configureShader(idx);
-			woodenTable.drawPointShadow(pointShadow.getShader());
-		}
+		    case POINT_LIGHT:
+			    for (int idx = 0; idx < lightCubePositions.size(); idx++)
+			    {
+				    pointShadow.configureShader(idx);
+				    woodenTable.drawShadow(pointShadow.getShader());
+			    }
+			    break;
+			case DIRECTIONAL_LIGHT:
+				directionalShadow.configureShader();
+				woodenTable.drawShadow(directionalShadow.getShader());
+                break;
+        }
+		
 
         // prepare state for ordinary drawing
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -151,11 +167,17 @@ int main()
         ImGui::NewFrame();
 
         // draw the objects
-        woodenTable.setPointShadowMaps(pointShadow.getDepthCubemaps());
-        woodenTable.draw(view, projection);
-        if (woodenTable.lightingType == POINT_LIGHT) {
-            lightCube.draw(view, projection);
+        switch (woodenTable.lightingType)
+        {
+            case POINT_LIGHT:
+                woodenTable.setPointShadowMaps(pointShadow.getDepthCubemaps());
+                lightCube.draw(view, projection);
+                break;
+			case DIRECTIONAL_LIGHT:
+				woodenTable.setDirShadowMap(directionalShadow.getDepthMap());
+                break;
         }
+        woodenTable.draw(view, projection);
 
 		// draw the skybox last, when the depth buffer is full
 		skybox.draw(view, projection);

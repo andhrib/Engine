@@ -49,13 +49,16 @@ public:
 	LightingType lightingType;
 
 public:
-	WoodenTable(std::vector<glm::vec3>& lightCubePositions, glm::vec3 cameraPos);
+	WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection);
 	void draw(glm::mat4& view, glm::mat4& projection);
+	void drawShadow(Shader& shadowShader);
+	void updateModelMatrix(float deltaTime);
+	// setters
 	void setLightingType(LightingType lt);
 	void setMaterial(MaterialType ct);
-	void drawPointShadow(Shader& pointShadowShader);
-	void updateModelMatrix(float deltaTime);
 	void setPointShadowMaps(std::vector<unsigned int>& depthCubemaps);
+	void setDirShadowMap(unsigned int depthMap);
+	void setLightSpaceMatrix(glm::mat4 lightSpaceMatrix);
 
 private:
 	// set the light positions in the shader
