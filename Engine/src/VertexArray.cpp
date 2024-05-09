@@ -10,8 +10,6 @@ VertexArray::VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& 
 	this->unBind();
 }
 
-
-
 VertexArray::~VertexArray()
 {
 	glDeleteVertexArrays(1, &VAO);

@@ -18,6 +18,7 @@
 #include "Skybox.h"
 #include "PointShadow.h"
 #include "DirectionalShadow.h"
+#include "PostProcessing.h"
 
 // callback function prototypes
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
@@ -26,7 +27,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // other function prototypes
 void processInput(GLFWwindow* window, ImGuiIO& io);
-void renderUI(WoodenTable& woodenTable);
+void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing);
 
 // window size parameters
 const int WINDOW_WIDTH = 1080;
@@ -114,6 +115,9 @@ int main()
 	PointShadow pointShadow(lightCubePositions);
     DirectionalShadow directionalShadow(dirLightDirection);
 
+	// the object for handling post-processing effects
+	PostProcessing postProcessing(WINDOW_WIDTH, WINDOW_HEIGHT);
+
 	// set the light space matrices
 	woodenTable.setLightSpaceMatrix(directionalShadow.lightSpaceMatrix);
 
@@ -159,7 +163,8 @@ int main()
 
         // prepare state for ordinary drawing
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+		postProcessing.bindFramebuffer();
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glCullFace(GL_BACK);
 
@@ -184,8 +189,11 @@ int main()
 		// draw the skybox last, when the depth buffer is full
 		skybox.draw(view, projection);
 
+        // draw the post-processed scene
+		postProcessing.draw();
+
         // configure the Imgui window
-		renderUI(woodenTable);
+		renderUI(woodenTable, postProcessing);
 
         // render Imgui
         ImGui::Render();
@@ -205,7 +213,7 @@ int main()
 	return 0;
 }
 
-void renderUI(WoodenTable& woodenTable) 
+void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing) 
 {
     ImGui::Begin("Window");
     // set the width of the sliders
@@ -270,6 +278,28 @@ void renderUI(WoodenTable& woodenTable)
                 {
                     selectedItem = n;
                     woodenTable.setLightingType((LightingType)n);
+                }
+            }
+            ImGui::TreePop();
+        }
+
+        ImGui::TreePop();
+    }
+	// the header for configuring post-processing effects
+    if (ImGui::TreeNode("Post-processing"))
+    {
+        // radio button list for selecting the post-processing effect
+        if (ImGui::TreeNode("Type"))
+        {
+            static int selectedItem = 0;
+            const char* items[] = { "None", "Inversion", "Grayscale", "Sharpen", "Blur", "Edge detection"};
+
+            for (int n = 0; n < IM_ARRAYSIZE(items); n++)
+            {
+                if (ImGui::RadioButton(items[n], selectedItem == n))
+                {
+                    selectedItem = n;
+                    postProcessing.type = (PostProcessingType)n;
                 }
             }
             ImGui::TreePop();

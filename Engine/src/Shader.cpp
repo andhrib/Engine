@@ -55,7 +55,7 @@ Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath, c
 
 Shader::~Shader()
 {
-	glDeleteProgram(shaderProgram);
+	//glDeleteProgram(shaderProgram);
 }
 
 void Shader::use() const
