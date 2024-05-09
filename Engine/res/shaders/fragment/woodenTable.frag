@@ -16,7 +16,7 @@ const vec3 SAMPLE_OFFSET_DIRECTIONS[SHADOW_SAMPLES] = vec3[]
    vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
 );
 
-const float DIR_SHADOW_BIAS = 0.05;
+const float DIR_SHADOW_BIAS = 0.005;
 
 struct Material 
 {

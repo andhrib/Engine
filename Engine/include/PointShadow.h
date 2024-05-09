@@ -12,8 +12,8 @@
 
 const unsigned int POINT_SHADOW_WIDTH = 1024;
 const unsigned int POINT_SHADOW_HEIGHT = 1024;
-const float POINT_SHADOW_NEAR = 1.0f;
-const float POINT_SHADOW_FAR = 25.0f;
+const float POINT_SHADOW_NEAR = 0.5f;
+const float POINT_SHADOW_FAR = 15.0f;
 
 class PointShadow
 {

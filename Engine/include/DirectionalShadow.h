@@ -12,8 +12,8 @@
 
 const unsigned int DIR_SHADOW_WIDTH = 1024;
 const unsigned int DIR_SHADOW_HEIGHT = 1024;
-const float DIR_SHADOW_NEAR = 1.0f;
-const float DIR_SHADOW_FAR = 25.0f;
+const float DIR_SHADOW_NEAR = 0.1f;
+const float DIR_SHADOW_FAR = 30.0f;
 
 class DirectionalShadow
 {

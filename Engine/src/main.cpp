@@ -51,7 +51,7 @@ std::vector<glm::vec3> lightCubePositions =
     glm::vec3(-2.0f, 3.0f, 5.0f),
     glm::vec3(-2.0f, -2.0f, 4.0f)
 };
-glm::vec3 dirLightDirection = glm::vec3(-5.0f, -5.0f, -5.0f);
+glm::vec3 dirLightDirection = glm::vec3(-10.0f, -10.0f, -10.0f);
 
 // create the camera object
 const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 10.0f);
@@ -140,6 +140,7 @@ int main()
         // rendering commands
 		// render to the depth cubemap
         glViewport(0, 0, POINT_SHADOW_WIDTH, POINT_SHADOW_HEIGHT);
+        glCullFace(GL_FRONT);
         switch (woodenTable.lightingType)
         {
 		    case POINT_LIGHT:
@@ -160,6 +161,7 @@ int main()
         glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glCullFace(GL_BACK);
 
         // start new frame in ImGui
         ImGui_ImplOpenGL3_NewFrame();
@@ -227,11 +229,11 @@ void renderUI(WoodenTable& woodenTable)
         ImGui::Text("Rotation axis");
 
         ImGui::PushItemWidth(width);
-        ImGui::SliderFloat("##x_pos", &(woodenTable.position.x), -25.0f, 25.0f);
+        ImGui::SliderFloat("##x_pos", &(woodenTable.position.x), -10.0f, 10.0f);
         ImGui::SameLine();
-        ImGui::SliderFloat("##y_pos", &(woodenTable.position.y), -25.0f, 25.0f);
+        ImGui::SliderFloat("##y_pos", &(woodenTable.position.y), -10.0f, 10.0f);
         ImGui::SameLine();
-        ImGui::SliderFloat("##z_pos", &(woodenTable.position.z), -25.0f, 25.0f);
+        ImGui::SliderFloat("##z_pos", &(woodenTable.position.z), -10.0f, 10.0f);
         ImGui::SameLine();
         ImGui::Text("Position");
 
