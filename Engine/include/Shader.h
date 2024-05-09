@@ -28,7 +28,6 @@ private:
 public:
 	Shader(const std::string& vertexPath, const std::string& fragmentPath);
 	Shader(const std::string& vertexPath, const std::string& fragmentPath, const std::string& geometryPath);
-	Shader() {}
 	~Shader();
 	// use the shader program
 	void use() const;

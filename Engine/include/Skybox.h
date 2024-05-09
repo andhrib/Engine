@@ -16,11 +16,6 @@ private:
 	VertexArray va;
 	Shader shader;
 
-	// vertex buffer data
-	std::vector<float> vbData;
-	// element buffer data
-	std::vector<unsigned int> ebData;
-
 public:
 	Skybox();
 	void draw(glm::mat4& view, glm::mat4& projection);

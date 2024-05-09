@@ -9,7 +9,7 @@ ElementBuffer::ElementBuffer(std::vector<unsigned int>& b) : buffer(b)
 
 ElementBuffer::~ElementBuffer()
 {
-	//glDeleteBuffers(1, &EBO);
+	glDeleteBuffers(1, &EBO);
 }
 
 void ElementBuffer::bind()

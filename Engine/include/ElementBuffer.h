@@ -13,7 +13,6 @@ private:
 
 public:
 	ElementBuffer(std::vector<unsigned int>& b);
-	ElementBuffer() {}
 	~ElementBuffer();
 	void bind();
 	unsigned int getEBO();

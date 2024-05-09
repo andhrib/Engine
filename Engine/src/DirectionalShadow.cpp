@@ -27,6 +27,11 @@ shader("res/shaders/vertex/directionalShadow.vert", "res/shaders/fragment/direct
 	shader.setMat4("u_lightSpaceMatrix", lightSpaceMatrix);
 }
 
+DirectionalShadow::~DirectionalShadow()
+{
+	glDeleteFramebuffers(1, &depthMapFBO);
+}
+
 void DirectionalShadow::configureShader()
 {
 	glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);

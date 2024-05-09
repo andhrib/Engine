@@ -35,6 +35,7 @@ private:
 
 public:
 	PointShadow(std::vector<glm::vec3>& lightCubePositions);
+	~PointShadow();
 	void configureShader(int idx);
 	Shader& getShader();
 	std::vector<unsigned int>& getDepthCubemaps();

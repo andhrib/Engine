@@ -18,11 +18,6 @@ private:
 	Shader shader;
 	std::vector<glm::vec3> positions; // multiple positions to enable having multiple light cubes
 
-	// vertex buffer data
-	std::vector<float> vbData;
-	// element buffer data
-	std::vector<unsigned int> ebData;
-
 public:
 	LightCube(std::vector<glm::vec3>& pos);
 	void draw(glm::mat4& view, glm::mat4& projection);

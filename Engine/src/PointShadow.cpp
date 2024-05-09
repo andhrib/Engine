@@ -26,6 +26,14 @@ PointShadow::PointShadow(std::vector<glm::vec3>& lightCubePositions) :
 	setupShadows(lightCubePositions);
 }
 
+PointShadow::~PointShadow()
+{
+	for (unsigned int depthMapFBO : depthMapFBOs)
+	{
+		glDeleteFramebuffers(1, &depthMapFBO);
+	}
+}
+
 Shader& PointShadow::getShader()
 {
 	return shader;

@@ -12,7 +12,6 @@ private:
 
 public:
 	VertexBuffer(std::vector<float>& b);
-	VertexBuffer() {}
 	~VertexBuffer();
 	void bind();
 	unsigned int getVBO();

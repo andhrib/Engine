@@ -20,7 +20,6 @@ private:
 
 public:
 	VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& ebData);
-	VertexArray() {}
 	~VertexArray();
 	// set the format of the attributes in the vertex array
 	void setFormat(std::vector<unsigned int>& attributeLengths, unsigned int stride);

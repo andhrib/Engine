@@ -14,7 +14,7 @@ VertexArray::VertexArray(std::vector<float>& vbData, std::vector<unsigned int>& 
 
 VertexArray::~VertexArray()
 {
-	//glDeleteVertexArrays(1, &VAO);
+	glDeleteVertexArrays(1, &VAO);
 }
 
 void VertexArray::setFormat(std::vector<unsigned int>& attributeLengths, unsigned int stride)

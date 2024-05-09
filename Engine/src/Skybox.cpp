@@ -1,33 +1,33 @@
 #include "Skybox.h"
 
-Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragment/skybox.frag")
+// vertex buffer data
+static std::vector<float> vbData =
+{                        // vertex positions
+	-0.5f,  0.5f,  0.5f, // front top left
+	-0.5f, -0.5f,  0.5f, // front bottom left
+	 0.5f, -0.5f,  0.5f, // front bottom right
+	 0.5f,  0.5f,  0.5f, // front top right
+	-0.5f,  0.5f, -0.5f, // back top left
+	-0.5f, -0.5f, -0.5f, // back bottom left
+	 0.5f, -0.5f, -0.5f, // back bottom right
+	 0.5f,  0.5f, -0.5f  // back top right
+};
+
+// element buffer data
+static std::vector<unsigned int> ebData =
+{					  // faces:
+	0, 1, 2, 2, 3, 0, // front
+	4, 0, 3, 3, 7, 4, // top
+	4, 5, 1, 1, 0, 4, // left
+	5, 6, 2, 2, 1, 5, // bottom
+	3, 2, 6, 6, 7, 3, // right
+	7, 6, 5, 5, 4, 7  // back
+};
+
+Skybox::Skybox() : shader("res/shaders/vertex/skybox.vert", "res/shaders/fragment/skybox.frag"),
+va(vbData, ebData)
 {
-	// vertex buffer data
-	vbData =
-	{                        // vertex positions
-		-0.5f,  0.5f,  0.5f, // front top left
-		-0.5f, -0.5f,  0.5f, // front bottom left
-		 0.5f, -0.5f,  0.5f, // front bottom right
-		 0.5f,  0.5f,  0.5f, // front top right
-		-0.5f,  0.5f, -0.5f, // back top left
-		-0.5f, -0.5f, -0.5f, // back bottom left
-		 0.5f, -0.5f, -0.5f, // back bottom right
-		 0.5f,  0.5f, -0.5f  // back top right
-	};
-
-	// element buffer data
-	ebData =
-	{					  // faces:
-		0, 1, 2, 2, 3, 0, // front
-		4, 0, 3, 3, 7, 4, // top
-		4, 5, 1, 1, 0, 4, // left
-		5, 6, 2, 2, 1, 5, // bottom
-		3, 2, 6, 6, 7, 3, // right
-		7, 6, 5, 5, 4, 7  // back
-	};
-
 	// create and set up the vertex array
-	va = VertexArray(vbData, ebData);
 	std::vector<unsigned int> attributeLengths = { 3 }; // one attribute (position) with three coordinates
 	va.setFormat(attributeLengths, 3);
 

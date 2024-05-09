@@ -28,6 +28,7 @@ public:
 
 public:
 	DirectionalShadow(glm::vec3& dirLightDirection);
+	~DirectionalShadow();
 	void configureShader();
 
 	// getters

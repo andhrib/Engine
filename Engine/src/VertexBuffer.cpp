@@ -9,7 +9,7 @@ VertexBuffer::VertexBuffer(std::vector<float>& b) : buffer(b)
 
 VertexBuffer::~VertexBuffer()
 {
-	//glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &VBO);
 }
 
 void VertexBuffer::bind()
