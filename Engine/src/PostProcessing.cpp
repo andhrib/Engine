@@ -60,6 +60,7 @@ PostProcessing::PostProcessing(int width, int height) : va(vbData, ebData), type
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// load the shaders
+	shaders.reserve(fragmentShaderPaths.size());
 	for (std::string& fragmentShaderPath : fragmentShaderPaths)
 	{
 		shaders.emplace_back(vertexShaderPath, fragmentShaderPath);
