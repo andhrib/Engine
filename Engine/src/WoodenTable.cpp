@@ -15,18 +15,21 @@ lightingType(POINT_LIGHT)
 	shader.addTexture("res/textures/metal/metal_specular.jpg", "metal_specular");
 	shader.addTexture("res/textures/rock/rock_albedo.jpg", "rock_albedo");
 	shader.addTexture("res/textures/rock/rock_specular.jpg", "rock_specular");
+	shader.addTexture("res/models/wooden_table/Normal.png", "normal");
 
 	// set the texture uniforms
 	shader.addTextureUniform("u_material.texture_albedo", 0);
 	shader.addTextureUniform("u_material.texture_specular", 1);
+	shader.addTextureUniform("u_material.texture_normal", 2);
 
 	// the default material is wood
 	shader.changeMaterial("u_material.texture_albedo", "wood_albedo");
 	shader.changeMaterial("u_material.texture_specular", "wood_specular");
+	shader.changeMaterial("u_material.texture_normal", "normal");
 	setMaterial(WOOD);
 
 	// set the camera position
-	shader.setVec3("u_cameraPos", cameraPos);
+	shader.setVec3("u_viewPos", cameraPos);
 
 	// set the point light as the default lighting type
 	shader.setInt("u_lightingType", lightingType);

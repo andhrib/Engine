@@ -1,11 +1,8 @@
 #include "Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> &vertices, std::vector<unsigned int> &indices, std::vector<Texture> &textures)
+Mesh::Mesh(std::vector<Vertex>& vertices, std::vector<unsigned int>& indices, std::vector<Texture>& textures) :
+	vertices(vertices), indices(indices), textures(textures)
 {
-	this->vertices = vertices;
-	this->indices = indices;
-	this->textures = textures;
-
 	setupMesh();
 }
 
@@ -64,6 +61,8 @@ void Mesh::setupMesh()
 	glEnableVertexAttribArray(1);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+	glEnableVertexAttribArray(3);
 
 	glBindVertexArray(0);
 }

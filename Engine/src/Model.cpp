@@ -10,7 +10,7 @@ void Model::draw(Shader& shader)
 void Model::loadModel(std::string path)
 {
     Assimp::Importer importer;
-    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -65,6 +65,11 @@ Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
         else {
             vertex.TexCoords = glm::vec2(0.0f);
         }
+
+		// tangent
+		vertex.Tangent.x = mesh->mTangents[i].x;
+		vertex.Tangent.y = mesh->mTangents[i].y;
+		vertex.Tangent.z = mesh->mTangents[i].z;
 
         vertices.push_back(vertex);
     }

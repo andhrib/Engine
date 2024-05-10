@@ -27,30 +27,31 @@ static std::vector<std::string> fragmentShaderPaths =
 
 PostProcessing::PostProcessing(int width, int height) : va(vbData, ebData), type(NONE)
 {
+	// prepare the framebuffer with multisampling enabled
 	// generate and bind the framebuffer object
-	glGenFramebuffers(1, &fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glGenFramebuffers(1, &msFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, msFBO);
 
 	// generate and bind the texture color buffer
-	glGenTextures(1, &textureColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+	glGenTextures(1, &msTextureColorBuffer);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, msTextureColorBuffer);
 	// allocate memory for the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, SAMPLES, GL_RGB, width, height, GL_TRUE);
 	// set the texture wrapping parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D_MULTISAMPLE, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
 	// attach it to currently bound framebuffer object
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, msTextureColorBuffer, 0);
 
 	// generate and bind the renderbuffer object for depth and stencil attachments
-	glGenRenderbuffers(1, &rboDepthStencil);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepthStencil);
+	glGenRenderbuffers(1, &msRBODepthStencil);
+	glBindRenderbuffer(GL_RENDERBUFFER, msRBODepthStencil);
 	// allocate memory for the renderbuffer
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height);
+	glRenderbufferStorageMultisample(GL_RENDERBUFFER, SAMPLES, GL_DEPTH24_STENCIL8, width, height);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	// attach it to currently bound framebuffer object
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rboDepthStencil);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, msRBODepthStencil);
 
 	// check if the framebuffer is complete
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) 
@@ -58,6 +59,23 @@ PostProcessing::PostProcessing(int width, int height) : va(vbData, ebData), type
 		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	// prepare the framebuffer with multisampling disabled for post-processing
+	// generate and bind the framebuffer object
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	// generate and bind the texture color buffer
+	glGenTextures(1, &textureColorBuffer);
+	glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
+	// allocate memory for the texture
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_FLOAT, NULL);
+	// set the texture wrapping parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	// attach it to currently bound framebuffer object
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
 
 	// load the shaders
 	shaders.reserve(fragmentShaderPaths.size());
@@ -74,20 +92,24 @@ PostProcessing::PostProcessing(int width, int height) : va(vbData, ebData), type
 PostProcessing::~PostProcessing()
 {
 	// delete the framebuffer object
-	glDeleteFramebuffers(1, &fbo);
+	glDeleteFramebuffers(1, &msFBO);
 	// delete the texture color buffer
-	glDeleteTextures(1, &textureColorBuffer);
+	glDeleteTextures(1, &msTextureColorBuffer);
 	// delete the renderbuffer object for depth and stencil attachments
-	glDeleteRenderbuffers(1, &rboDepthStencil);
+	glDeleteRenderbuffers(1, &msRBODepthStencil);
 }
 
 void PostProcessing::bindFramebuffer()
 {
-	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
+	glBindFramebuffer(GL_FRAMEBUFFER, msFBO);
 }
 
-void PostProcessing::draw()
+void PostProcessing::draw(int width, int height)
 {
+	// resolve the multisampled framebuffer to the normal intermediary framebuffer
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, msFBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);
+	glBlitFramebuffer(0, 0, width, height, 0, 0, width, height, GL_COLOR_BUFFER_BIT, GL_NEAREST);
 	// bind the default framebuffer object
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	// clear the color buffer

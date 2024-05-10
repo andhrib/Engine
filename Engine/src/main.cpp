@@ -65,6 +65,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
     // create window
     GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Engine", NULL, NULL);
@@ -103,6 +104,7 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
     glCullFace(GL_BACK);
+	glEnable(GL_MULTISAMPLE);
 
 	// the skybox object
     Skybox skybox;
@@ -190,7 +192,7 @@ int main()
 		skybox.draw(view, projection);
 
         // draw the post-processed scene
-		postProcessing.draw();
+		postProcessing.draw(WINDOW_WIDTH, WINDOW_HEIGHT);
 
         // configure the Imgui window
 		renderUI(woodenTable, postProcessing);

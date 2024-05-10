@@ -22,6 +22,7 @@ struct Material
 {
 	sampler2D texture_albedo;
 	sampler2D texture_specular;
+	sampler2D texture_normal;
 
 	float ambientStrength;
 	float diffuseStrength;
@@ -29,21 +30,23 @@ struct Material
 	float shininess;
 };
 
-in vec3 normal;
 in vec2 texCoords;
 in vec3 fragPos;
 in vec4 lightSpaceFragPos;
+in vec3 tangentLightPositions[NUM_OF_LIGHTS];
+in vec3 tangentViewPos;
+in vec3 tangentFragPos;
+in vec3 tangentDirLightDirection;
 
 out vec4 fragColor;
 
 uniform Material u_material;
-uniform vec3 u_lightPositions[NUM_OF_LIGHTS];
-uniform vec3 u_cameraPos;
-uniform vec3 u_dirLightDirection;
 uniform int u_lightingType;
 uniform samplerCube u_pointShadowMap[NUM_OF_LIGHTS];
 uniform float u_farPlane;
 uniform sampler2D u_dirShadowMap;
+uniform vec3 u_viewPos;
+uniform vec3 u_lightPositions[NUM_OF_LIGHTS];
 
 vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir);
 vec3 calcDirLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir);
@@ -52,24 +55,24 @@ float calcDirShadow();
 
 void main() 
 {
-	vec3 albedoColor = vec3(texture(u_material.texture_albedo, texCoords));
+	vec3 albedoColor = texture(u_material.texture_albedo, texCoords).rgb;
 	vec4 specularTexture = texture(u_material.texture_specular, texCoords);
 	vec3 specularColor = vec3(specularTexture.r);
+	vec3 normal = texture(u_material.texture_normal, texCoords).rgb;
+	normal = normal * 2.0 - 1.0; // transform normal vector from [0, 1] to [-1, 1]
 	// unit vector that points from the fragment to the camera
-	vec3 viewDir = normalize(u_cameraPos - fragPos);
-	// normals are not necessarily normalised
-	vec3 norm = normalize(normal);
+	vec3 viewDir = normalize(tangentViewPos - tangentFragPos);
 	vec3 lighting;
 
 	switch (u_lightingType)
 	{
 		case POINT_LIGHT:
-			vec3 pointLight = calcPointLight(norm, albedoColor, specularColor, viewDir);
+			vec3 pointLight = calcPointLight(normal, albedoColor, specularColor, viewDir);
 			lighting = pointLight;
 			break;
 
 		case DIRECTIONAL_LIGHT:
-			vec3 dirLight = calcDirLight(norm, albedoColor, specularColor, viewDir);
+			vec3 dirLight = calcDirLight(normal, albedoColor, specularColor, viewDir);
 			float shadow = calcDirShadow();
 			lighting = dirLight * (1.0 - shadow);
 			break;
@@ -80,14 +83,14 @@ void main()
 vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir) 
 {
 	vec3 pointLight = u_material.ambientStrength * albedoColor;
-	float viewDistance = length(u_cameraPos - fragPos);
+	float viewDistance = length(u_viewPos - fragPos);
 	// disk radius is proportional to the distance from the light source, making the shadows sharper up close
 	float diskRadius = (1.0 + (viewDistance / u_farPlane)) / 25.0;
 
 	for (int i = 0; i < NUM_OF_LIGHTS; i++) 
 	{
 		// unit vector that points from the fragment to the light source
-		vec3 lightDir = normalize(u_lightPositions[i] - fragPos);
+		vec3 lightDir = normalize(tangentLightPositions[i] - tangentFragPos);
 		// vector that points in the direction of reflected light
 		vec3 reflectDir = reflect(-lightDir, normal);
 		// diffuse component
@@ -113,7 +116,7 @@ vec3 calcDirLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDi
 	vec3 dirLight = u_material.ambientStrength * albedoColor;
 
 	// unit vector that points from the fragment to the light source
-	vec3 lightDir = normalize(-u_dirLightDirection);
+	vec3 lightDir = normalize(-tangentDirLightDirection);
 	// vector that points in the direction of reflected light
 	vec3 reflectDir = reflect(-lightDir, normal);
 	// diffuse component
