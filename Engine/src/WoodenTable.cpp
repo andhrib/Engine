@@ -11,11 +11,13 @@ lightingType(POINT_LIGHT)
     shader.use();
 	shader.addTexture("res/models/wooden_table/Albedo.jpg", "wood_albedo");
 	shader.addTexture("res/models/wooden_table/Metallic.jpg", "wood_specular");
+	shader.addTexture("res/models/wooden_table/Normal.png", "wood_normal");
 	shader.addTexture("res/textures/metal/metal_albedo.jpg", "metal_albedo");
 	shader.addTexture("res/textures/metal/metal_specular.jpg", "metal_specular");
+	shader.addTexture("res/textures/metal/metal_normal.jpg", "metal_normal");
 	shader.addTexture("res/textures/rock/rock_albedo.jpg", "rock_albedo");
 	shader.addTexture("res/textures/rock/rock_specular.jpg", "rock_specular");
-	shader.addTexture("res/models/wooden_table/Normal.png", "normal");
+	shader.addTexture("res/textures/rock/rock_normal.jpg", "rock_normal");
 
 	// set the texture uniforms
 	shader.addTextureUniform("u_material.texture_albedo", 0);
@@ -25,7 +27,7 @@ lightingType(POINT_LIGHT)
 	// the default material is wood
 	shader.changeMaterial("u_material.texture_albedo", "wood_albedo");
 	shader.changeMaterial("u_material.texture_specular", "wood_specular");
-	shader.changeMaterial("u_material.texture_normal", "normal");
+	shader.changeMaterial("u_material.texture_normal", "wood_normal");
 	setMaterial(WOOD);
 
 	// set the camera position
@@ -75,26 +77,29 @@ void WoodenTable::setMaterial(MaterialType ct)
 	case WOOD:
 		shader.changeMaterial("u_material.texture_albedo", "wood_albedo");
 		shader.changeMaterial("u_material.texture_specular", "wood_specular");
+		shader.changeMaterial("u_material.texture_normal", "wood_normal");
 		shader.setFloat("u_material.ambientStrength", 0.005f);
 		shader.setFloat("u_material.diffuseStrength", 1.0f);
 		shader.setFloat("u_material.specularStrength", 0.5f);
-		shader.setFloat("u_material.shininess", 32.0f);
+		shader.setFloat("u_material.shininess", 16.0f);
 		break;
 	case METAL:
 		shader.changeMaterial("u_material.texture_albedo", "metal_albedo");
 		shader.changeMaterial("u_material.texture_specular", "metal_specular");
+		shader.changeMaterial("u_material.texture_normal", "metal_normal");
 		shader.setFloat("u_material.ambientStrength", 0.005f);
 		shader.setFloat("u_material.diffuseStrength", 1.0f);
-		shader.setFloat("u_material.specularStrength", 0.5f);
+		shader.setFloat("u_material.specularStrength", 0.6f);
 		shader.setFloat("u_material.shininess", 32.0f);
 		break;
 	case ROCK:
 		shader.changeMaterial("u_material.texture_albedo", "rock_albedo");
 		shader.changeMaterial("u_material.texture_specular", "rock_specular");
+		shader.changeMaterial("u_material.texture_normal", "rock_normal");
 		shader.setFloat("u_material.ambientStrength", 0.005f);
 		shader.setFloat("u_material.diffuseStrength", 1.0f);
-		shader.setFloat("u_material.specularStrength", 0.5f);
-		shader.setFloat("u_material.shininess", 32.0f);
+		shader.setFloat("u_material.specularStrength", 0.3f);
+		shader.setFloat("u_material.shininess", 16.0f);
 		break;
 
 	}

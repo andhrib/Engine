@@ -30,8 +30,8 @@ void processInput(GLFWwindow* window, ImGuiIO& io);
 void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing);
 
 // window size parameters
-const int WINDOW_WIDTH = 1080;
-const int WINDOW_HEIGHT = 720;
+const int WINDOW_WIDTH = 2160;
+const int WINDOW_HEIGHT = 1440;
 
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
