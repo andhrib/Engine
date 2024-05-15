@@ -40,13 +40,18 @@ private:
 	unsigned int FBO;
 	// Texture color buffer with multisampling disabled for post-processing
 	unsigned int textureColorBuffer;
-
+	// the dimensions of the window, used for setting up the framebuffer textures
+	int windowWidth;
+	int windowHeight;
 public:
 	PostProcessingType type;
 
 public: 
 	PostProcessing(int width, int height);
 	~PostProcessing();
-	void bindFramebuffer();
-	void draw(int width, int height);
+	void bindFramebuffer(int width, int height);
+	void draw();
+
+private: 
+	void setupFramebuffers();
 };

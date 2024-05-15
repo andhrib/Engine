@@ -74,11 +74,49 @@ void Shader::setActiveTextures()
 	}
 }
 
-void Shader::addTexture(const std::string& path, const std::string& texture_name)
+void Shader::addTexture(const std::string& path, const std::string& textureName)
 {
-	glUseProgram(shaderProgram);
 	unsigned int textureID = loadTexture(path.c_str());
-	textureMap[texture_name] = textureID;
+	textureMap[textureName] = textureID;
+}
+
+void Shader::addTextures(const std::vector<std::string>& paths, const std::vector<std::string>& textureNames)
+{
+	int n = paths.size();
+	std::vector<std::thread> threads;
+	threads.reserve(n);
+	unsigned int* textureIDs = new unsigned int[n];
+	std::vector<int> width(n), height(n), nrComponents(n);
+	std::vector<unsigned char*> data(n);
+	std::vector<GLenum> format(n);
+	glGenTextures(n, textureIDs);
+
+	for (int i = 0; i < n; i++) {
+		threads.emplace_back(&Shader::loadTextureThread, this, paths[i].c_str(), textureIDs[i], &width[i], &height[i], &nrComponents[i], &data[i], std::ref(format[i]));
+	}
+	for (int i = 0; i < n; i++) {
+		threads[i].join();
+	}
+
+	for (int i = 0; i < n; i++) {
+		// bind the texture
+		glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+		// set the texture format
+		glTexImage2D(GL_TEXTURE_2D, 0, format[i], width[i], height[i], 0, format[i], GL_UNSIGNED_BYTE, data[i]);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		// set the texture wrapping/filtering options (on the currently bound texture object)
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// store the texture in the texture map
+		textureMap[textureNames[i]] = textureIDs[i];
+		stbi_image_free(data[i]);
+	}
+
+	delete[] textureIDs;
 }
 
 void Shader::addTextureUniform(const std::string& uniform_name, int location)
@@ -132,6 +170,25 @@ unsigned int Shader::loadTexture(char const* path)
 	}
 
 	return textureID;
+}
+
+void Shader::loadTextureThread(char const* path, unsigned int textureID, int* width, int* height, int* nrComponents, unsigned char** data, GLenum& format)
+{
+	*data = stbi_load(path, width, height, nrComponents, 0);
+	if (data)
+	{
+		if (*nrComponents == 1)
+			format = GL_RED;
+		else if (*nrComponents == 3)
+			format = GL_RGB;
+		else if (*nrComponents == 4)
+			format = GL_RGBA;
+
+	}
+	else
+	{
+		std::cout << "Texture failed to load at path: " << path << std::endl;
+	}
 }
 
 unsigned int Shader::compileShader(const std::string& path, GLenum type)

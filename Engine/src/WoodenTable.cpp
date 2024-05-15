@@ -1,5 +1,29 @@
 #include "WoodenTable.h"
 
+static std::vector<std::string> paths = {
+	"res/models/wooden_table/Albedo.jpg",
+	"res/models/wooden_table/Metallic.jpg",
+	"res/models/wooden_table/Normal.jpg",
+	"res/textures/metal/metal_albedo.jpg",
+	"res/textures/metal/metal_specular.jpg",
+	"res/textures/metal/metal_normal.jpg",
+	"res/textures/rock/rock_albedo.jpg",
+	"res/textures/rock/rock_specular.jpg",
+	"res/textures/rock/rock_normal.jpg"
+};
+
+static std::vector<std::string> textureNames = {
+	"wood_albedo",
+	"wood_specular",
+	"wood_normal",
+	"metal_albedo",
+	"metal_specular",
+	"metal_normal",
+	"rock_albedo",
+	"rock_specular",
+	"rock_normal"
+};
+
 WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection) : 
 model("res/models/wooden_table/Wooden Table.dae"),
 shader("res/shaders/vertex/woodenTable.vert", "res/shaders/fragment/woodenTable.frag"),
@@ -8,16 +32,8 @@ dirLightDirection(dirLightDirection),
 lightingType(POINT_LIGHT)
 {
 	// set the textures
-    shader.use();
-	shader.addTexture("res/models/wooden_table/Albedo.jpg", "wood_albedo");
-	shader.addTexture("res/models/wooden_table/Metallic.jpg", "wood_specular");
-	shader.addTexture("res/models/wooden_table/Normal.png", "wood_normal");
-	shader.addTexture("res/textures/metal/metal_albedo.jpg", "metal_albedo");
-	shader.addTexture("res/textures/metal/metal_specular.jpg", "metal_specular");
-	shader.addTexture("res/textures/metal/metal_normal.jpg", "metal_normal");
-	shader.addTexture("res/textures/rock/rock_albedo.jpg", "rock_albedo");
-	shader.addTexture("res/textures/rock/rock_specular.jpg", "rock_specular");
-	shader.addTexture("res/textures/rock/rock_normal.jpg", "rock_normal");
+	shader.use();
+	shader.addTextures(paths, textureNames);
 
 	// set the texture uniforms
 	shader.addTextureUniform("u_material.texture_albedo", 0);
@@ -53,6 +69,7 @@ void WoodenTable::draw(glm::mat4& view, glm::mat4& projection)
 {
     // set the uniforms
     shader.use();
+	shader.setActiveTextures();
     shader.setMat4("u_view", view);
     shader.setMat4("u_projection", projection);
 	shader.setMat4("u_model", modelMat);

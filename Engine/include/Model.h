@@ -14,7 +14,6 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include <map>
 
 #include <Shader.h>
 #include <Mesh.h>
@@ -30,14 +29,10 @@ public:
 private:
     // model data
     std::vector<Mesh> meshes;
-    std::map<std::string, Texture> textures_loaded;
     std::string directory;
 
     void loadModel(std::string path);
     void processNode(aiNode* node, const aiScene* scene);
     Mesh processMesh(aiMesh* mesh, const aiScene* scene);
-    std::vector<Texture> loadMaterialTextures(aiMaterial* mat, aiTextureType type,
-        std::string typeName);
-    unsigned int TextureFromFile(char const* file, std::string& directory);
 };
 

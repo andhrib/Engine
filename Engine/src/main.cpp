@@ -30,8 +30,8 @@ void processInput(GLFWwindow* window, ImGuiIO& io);
 void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing);
 
 // window size parameters
-const int WINDOW_WIDTH = 2160;
-const int WINDOW_HEIGHT = 1440;
+int windowWidth = 1920;
+int windowHeight = 1080;
 
 // variables for calculating the duration of the current frame
 float deltaTime = 0.0f;
@@ -68,7 +68,7 @@ int main()
     glfwWindowHint(GLFW_SAMPLES, 4);
 
     // create window
-    GLFWwindow* window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Engine", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(windowWidth, windowHeight, "Engine", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -93,7 +93,7 @@ int main()
     ImGui_ImplOpenGL3_Init("#version 460");
 
     // set the viewport
-    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glViewport(0, 0, windowWidth, windowHeight);
 
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -118,7 +118,7 @@ int main()
     DirectionalShadow directionalShadow(dirLightDirection);
 
 	// the object for handling post-processing effects
-	PostProcessing postProcessing(WINDOW_WIDTH, WINDOW_HEIGHT);
+	PostProcessing postProcessing(windowWidth, windowHeight);
 
 	// set the light space matrices
 	woodenTable.setLightSpaceMatrix(directionalShadow.lightSpaceMatrix);
@@ -130,6 +130,11 @@ int main()
     // main loop
     while (!glfwWindowShouldClose(window)) 
     {
+        // start new frame in ImGui
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         // calculate deltaTime
         float currentFrame = glfwGetTime();
         deltaTime = currentFrame - lastFrame;
@@ -141,7 +146,7 @@ int main()
         // update the model, view and projection matrices
 		woodenTable.updateModelMatrix(deltaTime);
         view = camera.getViewMatrix();
-        projection = glm::perspective(glm::radians(camera.getFOV()), (float)WINDOW_WIDTH / WINDOW_HEIGHT, NEAR, FAR);
+        projection = glm::perspective(glm::radians(camera.getFOV()), (float)windowWidth / windowHeight, NEAR, FAR);
 
         // rendering commands
 		// render to the depth cubemap
@@ -164,16 +169,12 @@ int main()
 		
 
         // prepare state for ordinary drawing
-        glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
-		postProcessing.bindFramebuffer();
+        glViewport(0, 0, windowWidth, windowHeight);
+		postProcessing.bindFramebuffer(windowWidth, windowHeight);
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glCullFace(GL_BACK);
-
-        // start new frame in ImGui
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
 
         // draw the objects
         switch (woodenTable.lightingType)
@@ -192,7 +193,7 @@ int main()
 		skybox.draw(view, projection);
 
         // draw the post-processed scene
-		postProcessing.draw(WINDOW_WIDTH, WINDOW_HEIGHT);
+		postProcessing.draw();
 
         // configure the Imgui window
 		renderUI(woodenTable, postProcessing);
@@ -316,6 +317,8 @@ void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing)
 // callback function for resizing the window
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
+    windowWidth = width;
+    windowHeight = height;
     glViewport(0, 0, width, height);
 }
 
