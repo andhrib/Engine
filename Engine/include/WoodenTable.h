@@ -48,8 +48,6 @@ public:
 	float rotSpeed;
 	// the position of the wooden table
 	glm::vec3 position;
-	// the direction of the directional light
-	glm::vec3 dirLightDirection;
 
 public:
 	WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection);
@@ -61,7 +59,8 @@ public:
 	void setMaterial(MaterialType ct);
 	void setPointShadowMaps(const std::vector<unsigned int>& depthCubemaps);
 	void setDirShadowMap(unsigned int depthMap);
-	void setLightSpaceMatrix(glm::mat4& lightSpaceMatrix);
+	void setLightSpaceMatrix(const glm::mat4& lightSpaceMatrix);
+	void setDirLightDirection(glm::vec3& dirLightDirection);
 	// getters
 	LightingType getLightingType() const;
 

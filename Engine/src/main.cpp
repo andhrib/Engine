@@ -27,7 +27,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // other function prototypes
 void processInput(GLFWwindow* window, ImGuiIO& io);
-void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing);
+void renderUI(WoodenTable& woodenTable, DirectionalShadow& directionalShadow, PostProcessing& postProcessing);
 
 // window size parameters
 int windowWidth = 1920;
@@ -52,7 +52,8 @@ std::vector<glm::vec3> lightCubePositions =
     glm::vec3(-2.0f, 3.0f, 5.0f),
     glm::vec3(-2.0f, -2.0f, 4.0f)
 };
-glm::vec3 dirLightDirection = glm::vec3(-10.0f, -10.0f, -10.0f);
+glm::vec3 dirLightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);
+float dirLightRadius = sqrt(3.0f) * 10.0f;
 
 // create the camera object
 const glm::vec3 cameraPos = glm::vec3(-3.0f, 2.0f, 10.0f);
@@ -120,7 +121,7 @@ int main()
 	PostProcessing postProcessing(windowWidth, windowHeight);
 
 	// set the light space matrices
-	woodenTable.setLightSpaceMatrix(directionalShadow.lightSpaceMatrix);
+	woodenTable.setLightSpaceMatrix(directionalShadow.getLightSpaceMatrix());
 
     // initialize the view and projection matrices
     glm::mat4 view(1.0f);
@@ -195,7 +196,7 @@ int main()
 		postProcessing.draw();
 
         // configure the Imgui window
-		renderUI(woodenTable, postProcessing);
+		renderUI(woodenTable, directionalShadow, postProcessing);
 
         // render Imgui
         ImGui::Render();
@@ -215,7 +216,7 @@ int main()
 	return 0;
 }
 
-void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing) 
+void renderUI(WoodenTable& woodenTable, DirectionalShadow& directionalShadow, PostProcessing& postProcessing) 
 {
     ImGui::Begin("Window");
     // set the width of the sliders
@@ -282,6 +283,29 @@ void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing)
                     woodenTable.setLighting((LightingType)n);
                 }
             }
+            ImGui::TreePop();
+        }
+
+		// Slider for setting the directional light direction
+        if (ImGui::TreeNode("Directional"))
+        {
+			glm::vec3 dir = dirLightDirection;
+            ImGui::PushItemWidth(width);
+            ImGui::SliderFloat("##x_dir_light", &(dir.x), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##y_dir_light", &(dir.y), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_dir_light", &(dir.z), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::Text("Rotation axis");
+
+            if (dir != dirLightDirection) {
+				dirLightDirection = dir;
+                dir = normalize(dir) * dirLightRadius;
+				woodenTable.setDirLightDirection(dir);
+                directionalShadow.setDirLightDirection(dir);
+            }
+
             ImGui::TreePop();
         }
 

@@ -24,11 +24,10 @@ static std::vector<std::string> textureNames = {
 	"rock_normal"
 };
 
-WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection) : 
+WoodenTable::WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection) :
 model("res/models/wooden_table/Wooden Table.dae"),
 shader("res/shaders/vertex/woodenTable.vert", "res/shaders/fragment/woodenTable.frag"),
-rotationMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f), position(0.0f), 
-dirLightDirection(dirLightDirection), 
+rotationMat(1.0f), axis(0.0f, 1.0f, 0.0f), rotSpeed(15.0f), position(0.0f),
 lightingType(POINT_LIGHT)
 {
 	// set the textures
@@ -169,10 +168,16 @@ void WoodenTable::setDirShadowMap(unsigned int depthMap)
 	glBindTexture(GL_TEXTURE_2D, depthMap);
 }
 
-void WoodenTable::setLightSpaceMatrix(glm::mat4& lightSpaceMatrix)
+void WoodenTable::setLightSpaceMatrix(const glm::mat4& lightSpaceMatrix)
 {
 	shader.use();
 	shader.setMat4("u_lightSpaceMatrix", lightSpaceMatrix);
+}
+
+void WoodenTable::setDirLightDirection(glm::vec3& dirLightDirection)
+{
+	shader.use();
+	shader.setVec3("u_dirLightDirection", dirLightDirection);
 }
 
 LightingType WoodenTable::getLightingType() const

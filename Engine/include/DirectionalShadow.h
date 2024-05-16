@@ -18,12 +18,17 @@ const float DIR_SHADOW_FAR = 30.0f;
 class DirectionalShadow
 {
 public:
-	// the light space matrix
-	glm::mat4 lightSpaceMatrix;
 	// the shader used to render the scene to the depth map
 	Shader shader;
 
 private:
+	// the view matrix
+	glm::mat4 view;
+	// the projection matrix
+	glm::mat4 projection;
+	// the light space matrix
+	glm::mat4 lightSpaceMatrix;
+
 	// the depth map frame buffer object
 	unsigned int depthMapFBO;
 	// the depth map texture
@@ -34,6 +39,10 @@ public:
 	~DirectionalShadow();
 	void configureShader();
 
+	// setters
+	void setDirLightDirection(glm::vec3& dirLightDirection);
+
 	// getters
 	unsigned int getDepthMap() const;
+	const glm::mat4& getLightSpaceMatrix() const;
 };

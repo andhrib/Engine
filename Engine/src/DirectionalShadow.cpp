@@ -20,8 +20,8 @@ shader("res/shaders/vertex/directionalShadow.vert", "res/shaders/fragment/direct
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// set the light space matrix
-	glm::mat4 view = glm::lookAt(-dirLightDirection, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, DIR_SHADOW_NEAR, DIR_SHADOW_FAR);
+	view = glm::lookAt(-dirLightDirection, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	projection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, DIR_SHADOW_NEAR, DIR_SHADOW_FAR);
 	lightSpaceMatrix = projection * view;
 	shader.use();
 	shader.setMat4("u_lightSpaceMatrix", lightSpaceMatrix);
@@ -38,7 +38,20 @@ void DirectionalShadow::configureShader()
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
+void DirectionalShadow::setDirLightDirection(glm::vec3& dirLightDirection)
+{
+	view = glm::lookAt(-dirLightDirection, glm::vec3(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	lightSpaceMatrix = projection * view;
+	shader.use();
+	shader.setMat4("u_lightSpaceMatrix", lightSpaceMatrix);
+}
+
 unsigned int DirectionalShadow::getDepthMap() const
 {
 	return depthMap;
+}
+
+const glm::mat4& DirectionalShadow::getLightSpaceMatrix() const
+{
+	return lightSpaceMatrix;
 }
