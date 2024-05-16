@@ -34,12 +34,7 @@ PointShadow::~PointShadow()
 	}
 }
 
-Shader& PointShadow::getShader()
-{
-	return shader;
-}
-
-std::vector<unsigned int>& PointShadow::getDepthCubemaps()
+const std::vector<unsigned int>& PointShadow::getDepthCubemaps() const
 {
 	return depthCubemaps;
 }

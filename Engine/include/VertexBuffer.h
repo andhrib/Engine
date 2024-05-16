@@ -8,12 +8,11 @@ class VertexBuffer
 {
 private:
 	unsigned int VBO;
-	std::vector<float> buffer;
 
 public:
-	VertexBuffer(std::vector<float>& b);
+	VertexBuffer(std::vector<float>& bufferData);
 	~VertexBuffer();
 	void bind();
-	unsigned int getVBO();
+	unsigned int getVBO() const;
 };
 

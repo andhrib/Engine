@@ -1,13 +1,18 @@
 #include "Model.h"
 
-void Model::draw(Shader& shader)
+Model::Model(const std::string& path)
+{
+	loadModel(path);
+}
+
+void Model::draw()
 {
     for (int i = 0; i < meshes.size(); i++) {
-        meshes[i].draw(shader);
+        meshes[i].draw();
     }
 }
 
-void Model::loadModel(std::string path)
+void Model::loadModel(const std::string& path)
 {
     Assimp::Importer importer;
     const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
@@ -25,10 +30,14 @@ void Model::loadModel(std::string path)
 void Model::processNode(aiNode* node, const aiScene* scene)
 {
     // process all the node's meshes (if any)
+    meshes.reserve(meshes.capacity() + node->mNumMeshes);
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshes.push_back(processMesh(mesh, scene));
+		std::vector<float> vbData;
+		std::vector<unsigned int> ebData;
+		processMesh(mesh, scene, vbData, ebData);
+        meshes.emplace_back(vbData, ebData);
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
@@ -37,50 +46,48 @@ void Model::processNode(aiNode* node, const aiScene* scene)
     }
 }
 
-Mesh Model::processMesh(aiMesh* mesh, const aiScene* scene)
+void Model::processMesh(aiMesh* mesh, const aiScene* scene, std::vector<float>& vbData, std::vector<unsigned int>& ebData)
 {
-    std::vector<Vertex> vertices;
-    std::vector<unsigned int> indices;
+	// reserve space for each vertex: position (3), normal (3), texCoords (2), tangent (3)
+	vbData.reserve(mesh->mNumVertices * 11);
 
     // read and store the vertex data from the mesh
     for (unsigned int i = 0; i < mesh->mNumVertices; i++) {
-        Vertex vertex;
+        
 
         // position
-        vertex.Position.x = mesh->mVertices[i].x;
-        vertex.Position.y = mesh->mVertices[i].y;
-        vertex.Position.z = mesh->mVertices[i].z;
+        vbData.push_back(mesh->mVertices[i].x);
+		vbData.push_back(mesh->mVertices[i].y);
+		vbData.push_back(mesh->mVertices[i].z);
 
         // normal
-        vertex.Normal.x = mesh->mNormals[i].x;
-        vertex.Normal.y = mesh->mNormals[i].y;
-        vertex.Normal.z = mesh->mNormals[i].z;
+        vbData.push_back(mesh->mNormals[i].x);
+        vbData.push_back(mesh->mNormals[i].y);
+        vbData.push_back(mesh->mNormals[i].z);
 
         // texture coordinates
         if (mesh->mTextureCoords[0]) {
-            vertex.TexCoords.x = mesh->mTextureCoords[0][i].x;
-            vertex.TexCoords.y = mesh->mTextureCoords[0][i].y;
-        }
-        else {
-            vertex.TexCoords = glm::vec2(0.0f);
+			vbData.push_back(mesh->mTextureCoords[0][i].x);
+			vbData.push_back(mesh->mTextureCoords[0][i].y);
+		}
+		else {
+			vbData.push_back(0.0f);
+			vbData.push_back(0.0f);
         }
 
 		// tangent
-		vertex.Tangent.x = mesh->mTangents[i].x;
-		vertex.Tangent.y = mesh->mTangents[i].y;
-		vertex.Tangent.z = mesh->mTangents[i].z;
-
-        vertices.push_back(vertex);
+		vbData.push_back(mesh->mTangents[i].x);
+		vbData.push_back(mesh->mTangents[i].y);
+		vbData.push_back(mesh->mTangents[i].z);
     }
 
     // read and store the indices data from the mesh
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
         aiFace face = mesh->mFaces[i];
+		ebData.reserve(ebData.capacity() + face.mNumIndices);
         for (unsigned int j = 0; j < face.mNumIndices; j++) {
-            indices.push_back(face.mIndices[j]);
+            ebData.push_back(face.mIndices[j]);
         }
     }
-
-    return Mesh(vertices, indices);
 }

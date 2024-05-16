@@ -9,12 +9,11 @@ class ElementBuffer
 {
 private:
 	unsigned int EBO;
-	std::vector<unsigned int> buffer;
 
 public:
-	ElementBuffer(std::vector<unsigned int>& b);
+	ElementBuffer(std::vector<unsigned int>& bufferData);
 	~ElementBuffer();
 	void bind();
-	unsigned int getEBO();
+	unsigned int getEBO() const;
 };
 

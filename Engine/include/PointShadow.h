@@ -17,6 +17,10 @@ const float POINT_SHADOW_FAR = 15.0f;
 
 class PointShadow
 {
+public:
+	// the shader used to render the scene to the depth cubemap
+	Shader shader;
+
 private:
 	// the depth cubemap textures
 	std::vector<unsigned int> depthCubemaps;
@@ -30,15 +34,14 @@ private:
 	std::vector<glm::vec3> lightCubeFaceDirections;
 	// the up vectors of the light cube faces, used to calculate the view matrices for each face
 	std::vector<glm::vec3> lightCubeFaceUpVectors;
-	// the shader used to render the scene to the depth cubemap
-	Shader shader;
 
 public:
 	PointShadow(std::vector<glm::vec3>& lightCubePositions);
 	~PointShadow();
 	void configureShader(int idx);
-	Shader& getShader();
-	std::vector<unsigned int>& getDepthCubemaps();
+
+	// getters
+	const std::vector<unsigned int>& getDepthCubemaps() const;
 
 private:
 	void setupShadows(std::vector<glm::vec3>& lightCubePositions);

@@ -16,7 +16,8 @@ private:
 	VertexArray va;
 	// a simple shader that sets the color to white
 	Shader shader;
-	std::vector<glm::vec3> positions; // multiple positions to enable having multiple light cubes
+	// multiple positions to enable having multiple light cubes
+	std::vector<glm::vec3> positions;
 
 public:
 	LightCube(std::vector<glm::vec3>& pos);

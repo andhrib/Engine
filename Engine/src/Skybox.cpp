@@ -32,6 +32,7 @@ va(vbData, ebData)
 	va.setFormat(attributeLengths, 3);
 
 	// load the skybox texture and flip it vertically
+	shader.use();
 	stbi_set_flip_vertically_on_load(true);
 	shader.addTexture("res/skybox_cubemaps/photo_studio.hdr", "photo_studio");
 	stbi_set_flip_vertically_on_load(false);

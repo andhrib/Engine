@@ -1,10 +1,10 @@
 #include "VertexBuffer.h"
 
-VertexBuffer::VertexBuffer(std::vector<float>& b) : buffer(b)
+VertexBuffer::VertexBuffer(std::vector<float>& bufferData)
 {
 	glGenBuffers(1, &VBO);
-	this->bind();
-	glBufferData(GL_ARRAY_BUFFER, buffer.size() * sizeof(float), buffer.data(), GL_STATIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glBufferData(GL_ARRAY_BUFFER, bufferData.size() * sizeof(float), bufferData.data(), GL_STATIC_DRAW);
 }
 
 VertexBuffer::~VertexBuffer()
@@ -17,7 +17,7 @@ void VertexBuffer::bind()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 }
 
-unsigned int VertexBuffer::getVBO()
+unsigned int VertexBuffer::getVBO() const
 {
 	return VBO;
 }

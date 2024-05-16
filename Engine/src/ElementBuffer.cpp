@@ -1,10 +1,10 @@
 #include "ElementBuffer.h"
 
-ElementBuffer::ElementBuffer(std::vector<unsigned int>& b) : buffer(b)
+ElementBuffer::ElementBuffer(std::vector<unsigned int>& bufferData)
 {
 	glGenBuffers(1, &EBO);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer.size() * sizeof(int), buffer.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferData.size() * sizeof(int), bufferData.data(), GL_STATIC_DRAW);
 }
 
 ElementBuffer::~ElementBuffer()
@@ -17,7 +17,7 @@ void ElementBuffer::bind()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 }
 
-unsigned int ElementBuffer::getEBO()
+unsigned int ElementBuffer::getEBO() const
 {
 	return EBO;
 }

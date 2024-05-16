@@ -25,6 +25,5 @@ public:
 	void setFormat(std::vector<unsigned int>& attributeLengths, unsigned int stride);
 	void bind();
 	void unBind();
-	void instancingMat4(const std::vector<glm::mat4>& data);
 };
 

@@ -48,17 +48,18 @@ void Camera::mouseInput(GLFWwindow* window, double xoffset, double yoffset)
 	up = glm::normalize(glm::cross(right, front));	
 }
 
-glm::mat4 Camera::getViewMatrix() const
+glm::mat4& Camera::getViewMatrix() const
 {
-	return glm::lookAt(position, position + front, up);
+	glm::mat4 view = glm::lookAt(position, position + front, up);
+	return view;
 }
 
-glm::vec3 Camera::getPosition() const
+const glm::vec3& Camera::getPosition() const
 {
 	return position;
 }
 
-glm::vec3 Camera::getFront() const
+const glm::vec3& Camera::getFront() const
 {
 	return front;
 }

@@ -38,12 +38,7 @@ void DirectionalShadow::configureShader()
 	glClear(GL_DEPTH_BUFFER_BIT);
 }
 
-Shader& DirectionalShadow::getShader()
-{
-	return shader;
-}
-
-unsigned int DirectionalShadow::getDepthMap()
+unsigned int DirectionalShadow::getDepthMap() const
 {
 	return depthMap;
 }

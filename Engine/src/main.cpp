@@ -98,7 +98,6 @@ int main()
     // register callback functions
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
     glfwSetScrollCallback(window, scroll_callback);
-	//glfwSetCursorPosCallback(window, cursor_position_callback);
 
     // flags
     glEnable(GL_DEPTH_TEST);
@@ -152,18 +151,18 @@ int main()
 		// render to the depth cubemap
         glViewport(0, 0, POINT_SHADOW_WIDTH, POINT_SHADOW_HEIGHT);
         glCullFace(GL_FRONT);
-        switch (woodenTable.lightingType)
+        switch (woodenTable.getLightingType())
         {
 		    case POINT_LIGHT:
 			    for (int idx = 0; idx < lightCubePositions.size(); idx++)
 			    {
 				    pointShadow.configureShader(idx);
-				    woodenTable.drawShadow(pointShadow.getShader());
+				    woodenTable.drawShadow(pointShadow.shader);
 			    }
 			    break;
 			case DIRECTIONAL_LIGHT:
 				directionalShadow.configureShader();
-				woodenTable.drawShadow(directionalShadow.getShader());
+				woodenTable.drawShadow(directionalShadow.shader);
                 break;
         }
 		
@@ -177,7 +176,7 @@ int main()
 		glCullFace(GL_BACK);
 
         // draw the objects
-        switch (woodenTable.lightingType)
+        switch (woodenTable.getLightingType())
         {
             case POINT_LIGHT:
                 woodenTable.setPointShadowMaps(pointShadow.getDepthCubemaps());
@@ -280,7 +279,7 @@ void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing)
                 if (ImGui::RadioButton(items[n], selectedItem == n))
                 {
                     selectedItem = n;
-                    woodenTable.setLightingType((LightingType)n);
+                    woodenTable.setLighting((LightingType)n);
                 }
             }
             ImGui::TreePop();
@@ -314,20 +313,6 @@ void renderUI(WoodenTable& woodenTable, PostProcessing& postProcessing)
     ImGui::End();
 }
 
-// callback function for resizing the window
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    windowWidth = width;
-    windowHeight = height;
-    glViewport(0, 0, width, height);
-}
-
-// callback function for scroll input
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
-{
-    camera.scrollInput(window, -yoffset);
-}
-
 // function for checking keyboard inputs and for setting callbacks that conflict with ImGui
 void processInput(GLFWwindow* window, ImGuiIO& io) 
 {
@@ -340,6 +325,20 @@ void processInput(GLFWwindow* window, ImGuiIO& io)
     {
         cursor_position_callback(window, io.MousePos.x, io.MousePos.y);
     }
+}
+
+// callback function for resizing the window
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    windowWidth = width;
+    windowHeight = height;
+    glViewport(0, 0, width, height);
+}
+
+// callback function for scroll input
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+    camera.scrollInput(window, -yoffset);
 }
 
 void cursor_position_callback(GLFWwindow* window, double xpos, double ypos)

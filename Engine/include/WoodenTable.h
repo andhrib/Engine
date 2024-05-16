@@ -37,6 +37,10 @@ private:
 	glm::mat4 translationMat;
 	glm::mat4 modelMat;
 
+	// the lighting type
+	LightingType lightingType;
+	// the material type
+	MaterialType materialType;
 public:
 	// the rotation axis
 	glm::vec3 axis;
@@ -46,8 +50,6 @@ public:
 	glm::vec3 position;
 	// the direction of the directional light
 	glm::vec3 dirLightDirection;
-	// the lighting type
-	LightingType lightingType;
 
 public:
 	WoodenTable(std::vector<glm::vec3>& lightCubePositions, const glm::vec3& cameraPos, glm::vec3& dirLightDirection);
@@ -55,11 +57,13 @@ public:
 	void drawShadow(Shader& shadowShader);
 	void updateModelMatrix(float deltaTime);
 	// setters
-	void setLightingType(LightingType lt);
+	void setLighting(LightingType mt);
 	void setMaterial(MaterialType ct);
-	void setPointShadowMaps(std::vector<unsigned int>& depthCubemaps);
+	void setPointShadowMaps(const std::vector<unsigned int>& depthCubemaps);
 	void setDirShadowMap(unsigned int depthMap);
-	void setLightSpaceMatrix(glm::mat4 lightSpaceMatrix);
+	void setLightSpaceMatrix(glm::mat4& lightSpaceMatrix);
+	// getters
+	LightingType getLightingType() const;
 
 private:
 	// set the light positions in the shader
