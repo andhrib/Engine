@@ -47,6 +47,8 @@ uniform float u_farPlane;
 uniform sampler2D u_dirShadowMap;
 uniform vec3 u_viewPos;
 uniform vec3 u_lightPositions[NUM_OF_LIGHTS];
+uniform vec3 u_pointLightColor;
+uniform vec3 u_dirLightColor;
 
 vec3 calcPointLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir);
 vec3 calcDirLight(vec3 normal, vec3 albedoColor, vec3 specularColor, vec3 viewDir);
@@ -68,13 +70,13 @@ void main()
 	{
 		case POINT_LIGHT:
 			vec3 pointLight = calcPointLight(normal, albedoColor, specularColor, viewDir);
-			lighting = pointLight;
+			lighting = pointLight * u_pointLightColor;
 			break;
 
 		case DIRECTIONAL_LIGHT:
 			vec3 dirLight = calcDirLight(normal, albedoColor, specularColor, viewDir);
 			float shadow = calcDirShadow();
-			lighting = dirLight * (1.0 - shadow);
+			lighting = dirLight * u_dirLightColor * (1.0 - shadow);
 			break;
 	}
 	gl_FragColor = vec4(lighting, 1.0);

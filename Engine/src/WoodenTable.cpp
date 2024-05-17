@@ -180,6 +180,18 @@ void WoodenTable::setDirLightDirection(glm::vec3& dirLightDirection)
 	shader.setVec3("u_dirLightDirection", dirLightDirection);
 }
 
+void WoodenTable::setDirLightColor(glm::vec3& dirLightColor)
+{
+	shader.use();
+	shader.setVec3("u_dirLightColor", dirLightColor);
+}
+
+void WoodenTable::setPointLightColor(glm::vec3& pointLightColor)
+{
+	shader.use();
+	shader.setVec3("u_pointLightColor", pointLightColor);
+}
+
 LightingType WoodenTable::getLightingType() const
 {
 	return lightingType;

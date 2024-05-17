@@ -22,4 +22,7 @@ private:
 public:
 	LightCube(std::vector<glm::vec3>& pos);
 	void draw(glm::mat4& view, glm::mat4& projection);
+
+	// setters
+	void setPointLightColor(glm::vec3& pointLightColor);
 };

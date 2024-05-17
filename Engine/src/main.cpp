@@ -27,7 +27,7 @@ void cursor_position_callback(GLFWwindow* window, double xpos, double ypos);
 
 // other function prototypes
 void processInput(GLFWwindow* window, ImGuiIO& io);
-void renderUI(WoodenTable& woodenTable, DirectionalShadow& directionalShadow, PostProcessing& postProcessing);
+void renderUI(WoodenTable& woodenTable, LightCube& lightCube, DirectionalShadow& directionalShadow, PostProcessing& postProcessing);
 
 // window size parameters
 int windowWidth = 1920;
@@ -52,7 +52,9 @@ std::vector<glm::vec3> lightCubePositions =
     glm::vec3(-2.0f, 3.0f, 5.0f),
     glm::vec3(-2.0f, -2.0f, 4.0f)
 };
+glm::vec3 pointLightColor = glm::vec3(1.0f);
 glm::vec3 dirLightDirection = glm::vec3(-1.0f, -1.0f, -1.0f);
+glm::vec3 dirLightColor = glm::vec3(1.0f);
 float dirLightRadius = sqrt(3.0f) * 10.0f;
 
 // create the camera object
@@ -112,6 +114,11 @@ int main()
     // the objects to be drawn into the scene
     WoodenTable woodenTable(lightCubePositions, cameraPos, dirLightDirection);
     LightCube lightCube(lightCubePositions);
+
+    // set the light colors
+    woodenTable.setDirLightColor(dirLightColor);
+    woodenTable.setPointLightColor(pointLightColor);
+    lightCube.setPointLightColor(pointLightColor);
 
     // the object to render the shadows
 	PointShadow pointShadow(lightCubePositions);
@@ -196,7 +203,7 @@ int main()
 		postProcessing.draw();
 
         // configure the Imgui window
-		renderUI(woodenTable, directionalShadow, postProcessing);
+		renderUI(woodenTable, lightCube, directionalShadow, postProcessing);
 
         // render Imgui
         ImGui::Render();
@@ -216,7 +223,7 @@ int main()
 	return 0;
 }
 
-void renderUI(WoodenTable& woodenTable, DirectionalShadow& directionalShadow, PostProcessing& postProcessing) 
+void renderUI(WoodenTable& woodenTable, LightCube& lightCube, DirectionalShadow& directionalShadow, PostProcessing& postProcessing) 
 {
     ImGui::Begin("Window");
     // set the width of the sliders
@@ -286,28 +293,68 @@ void renderUI(WoodenTable& woodenTable, DirectionalShadow& directionalShadow, Po
             ImGui::TreePop();
         }
 
-		// Slider for setting the directional light direction
-        if (ImGui::TreeNode("Directional"))
+		// Slider for setting the point light parameters
+        if (ImGui::TreeNode("Point"))
         {
-			glm::vec3 dir = dirLightDirection;
-            ImGui::PushItemWidth(width);
-            ImGui::SliderFloat("##x_dir_light", &(dir.x), -1.0f, 1.0f);
-            ImGui::SameLine();
-            ImGui::SliderFloat("##y_dir_light", &(dir.y), -1.0f, 1.0f);
-            ImGui::SameLine();
-            ImGui::SliderFloat("##z_dir_light", &(dir.z), -1.0f, 1.0f);
-            ImGui::SameLine();
-            ImGui::Text("Rotation axis");
+            glm::vec3 color = pointLightColor;
 
-            if (dir != dirLightDirection) {
-				dirLightDirection = dir;
-                dir = normalize(dir) * dirLightRadius;
-				woodenTable.setDirLightDirection(dir);
-                directionalShadow.setDirLightDirection(dir);
+            ImGui::PushItemWidth(width);
+            ImGui::SliderFloat("##x_point_light_color", &(color.x), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##y_point_light_color", &(color.y), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_point_light_color", &(color.z), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::Text("Color");
+
+            if (color != pointLightColor) {
+                pointLightColor = color;
+                woodenTable.setPointLightColor(pointLightColor);
+                lightCube.setPointLightColor(pointLightColor);
             }
 
             ImGui::TreePop();
         }
+
+        // Slider for setting the directional light parameters
+        if (ImGui::TreeNode("Directional"))
+        {
+            glm::vec3 dir = dirLightDirection;
+            ImGui::PushItemWidth(width);
+            ImGui::SliderFloat("##x_dir_light_dir", &(dir.x), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##y_dir_light_dir", &(dir.y), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_dir_light_dir", &(dir.z), -1.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::Text("Direction");
+
+            if (dir != dirLightDirection) {
+                dirLightDirection = dir;
+                dir = normalize(dir) * dirLightRadius;
+                woodenTable.setDirLightDirection(dir);
+                directionalShadow.setDirLightDirection(dir);
+                woodenTable.setLightSpaceMatrix(directionalShadow.getLightSpaceMatrix());
+            }
+
+            glm::vec3 color = dirLightColor;
+
+            ImGui::SliderFloat("##x_dir_light_color", &(color.x), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##y_dir_light_color", &(color.y), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::SliderFloat("##z_dir_light_color", &(color.z), 0.0f, 1.0f);
+            ImGui::SameLine();
+            ImGui::Text("Color");
+
+            if (color != dirLightColor) {
+                dirLightColor = color;
+                woodenTable.setDirLightColor(dirLightColor);
+            }
+
+            ImGui::TreePop();
+        }
+
 
         ImGui::TreePop();
     }

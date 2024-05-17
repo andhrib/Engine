@@ -51,3 +51,9 @@ void LightCube::draw(glm::mat4& view, glm::mat4& projection)
 		glDrawElements(GL_TRIANGLES, ebData.size(), GL_UNSIGNED_INT, 0);
 	}
 }
+
+void LightCube::setPointLightColor(glm::vec3& pointLightColor)
+{
+	shader.use();
+	shader.setVec3("u_pointLightColor", pointLightColor);
+}

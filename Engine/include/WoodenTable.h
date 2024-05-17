@@ -61,6 +61,8 @@ public:
 	void setDirShadowMap(unsigned int depthMap);
 	void setLightSpaceMatrix(const glm::mat4& lightSpaceMatrix);
 	void setDirLightDirection(glm::vec3& dirLightDirection);
+	void setDirLightColor(glm::vec3& dirLightColor);
+	void setPointLightColor(glm::vec3& pointLightColor);
 	// getters
 	LightingType getLightingType() const;
 
